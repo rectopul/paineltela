@@ -1,5 +1,5 @@
 const UserImage = require('../models/UserImage')
-const UserByToken = require('../middlewares/userByToken')
+const UserByToken = require('../middlewares/auth')
 
 module.exports = {
     async index(req, res) {

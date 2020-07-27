@@ -32,11 +32,11 @@ class SessionController {
                     return res.status(401).json({ error: 'Incorrect Password' })
                 }
 
-                const userjson = user.toJSON()
+                const userJson = user.toJSON()
 
-                delete userjson.password_hash
-                delete userjson.passwordResetToken
-                delete userjson.passwordResetExpires
+                delete userJson.password_hash
+                delete userJson.passwordResetToken
+                delete userJson.passwordResetExpires
 
                 res.cookie('token', user.generateToken(), {
                     maxAge: expiration * 60000,
@@ -46,13 +46,13 @@ class SessionController {
                 })
 
                 return res.json({
-                    userjson,
+                    userJson,
                     token: user.generateToken(),
                 })
             })
         } catch (error) {
-            return res.status(500).json({ error: error.message })
             console.log(`Erro de sessão: `, error)
+            return res.status(500).json({ error: error.message })
         }
     }
 }

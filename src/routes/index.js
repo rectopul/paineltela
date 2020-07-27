@@ -3,15 +3,12 @@ const cookieParser = require('cookie-parser')
 const pages = require('./pages')
 const api = require('./api')
 
-//Pages
-const Index = require('../controllers/views/indexView')
-
 const routes = express.Router()
 
 //const credentials = require('./middlewares/UserCredentials')
 
 //Test de rota
-routes.get(`/`, Index.view)
+routes.get(`/`, (req, res) => res.json({ error: `Not found` }))
 routes.use(cookieParser())
 
 routes.use(pages)

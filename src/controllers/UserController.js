@@ -1,9 +1,8 @@
 const User = require('../models/User')
 const UserImage = require('../models/UserImage')
-const jwt = require('jsonwebtoken')
 const crypto = require('crypto')
 const mailer = require('../modules/mailer')
-const UserByToken = require('../middlewares/userByToken')
+const UserByToken = require('../middlewares/auth')
 
 module.exports = {
     async index(req, res) {

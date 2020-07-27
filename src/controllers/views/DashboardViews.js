@@ -1,5 +1,4 @@
-const User = require('../../models/User')
-const authUser = require('../../middlewares/auth')
+const userByToken = require('../../middlewares/auth')
 
 module.exports = {
     async view(req, res) {
@@ -8,10 +7,11 @@ module.exports = {
 
             if (!token) return res.redirect('/login')
 
-            const { user_id } = await authUser(token)
+            const { user_id } = await userByToken(token)
+            //userName
 
-            return res.render('users', {
-                pageTitle: `Usuários`,
+            return res.render('dashboard', {
+                title: `Dashboard`,
             })
         } catch (error) {
             console.log(error)
