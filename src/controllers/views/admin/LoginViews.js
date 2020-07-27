@@ -5,7 +5,7 @@ module.exports = {
             const secretKey = process.env.RECAPTCHA_SITE_KEY
 
             return res.render('login', {
-                pageClasses: `bg-gradient-primary`,
+                pageClasses: `bg-default g-sidenav-show g-sidenav-pinned`,
                 title: `Login`,
                 rcSiteKey,
                 secretKey,

@@ -30,9 +30,10 @@ app.use(
 //config
 //template angine
 app.engine(
-    `handlebars`,
+    `hbs`,
     handlebars({
         defaultLayout: `main`,
+        extname: '.hbs',
         helpers: {
             ifCond: (v1, v2, options) => {
                 if (v1 === v2) {
@@ -142,7 +143,7 @@ app.use((req, res, next) => {
     next()
 })
 
-app.set(`view engine`, `handlebars`)
+app.set(`view engine`, `hbs`)
 app.set('views', path.join(__dirname, 'views'))
 
 //Public
