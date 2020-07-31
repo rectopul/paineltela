@@ -22,6 +22,67 @@ const util = (() => {
         })
     }
 
+    const serialize = (form) => {
+        const inputs = [...form.elements]
+
+        const object = {}
+
+        inputs.map((input, key) => {
+            //console.dir(input)
+            if (input.type == `radio`) {
+                if (input.checked) return (object[input.name] = input.value)
+                else return
+            }
+
+            if (input.name) object[input.name] = input.value
+        })
+
+        return object
+    }
+
+    const resetForm = (form) => {
+        const inputs = [...form.elements]
+
+        inputs.map((input) => (input.value = ``))
+    }
+
+    const notify = (params) => {
+        const { icon, title, message, type } = params
+        //Notify
+
+        /**
+         *
+         * <div data-notify="container" class="alert alert-dismissible alert-warning alert-notify animated fadeInDown" role="alert" data-notify-position="top-center">
+         * <span class="alert-icon ni ni-bell-55" data-notify="icon"></span>
+         * <div class="alert-text" <="" div=""> <span class="alert-title" data-notify="title"> Bootstrap Notify</span> <span data-notify="message">Turning standard Bootstrap alerts into awesome notifications</span></div><button type="button" class="close" data-notify="dismiss" aria-label="Close" style="position: absolute; right: 10px; top: 5px; z-index: 1082;"><span aria-hidden="true">×</span></button></div>
+         *
+         */
+        return $.notify(
+            {
+                // options
+                icon: icon,
+                title: title,
+                message: message,
+            },
+            {
+                // settings
+                type: type,
+                template: `
+                <div data-notify="container" class="alert alert-dismissible alert-{0} alert-notify" role="alert">
+                    <span class="alert-icon" data-notify="icon"></span>
+                    <div class="alert-text"> 
+                        <span class="alert-title" data-notify="title">{1}</span>
+                        <span data-notify="message">{2}</span>
+                    </div>
+                    <button type="button" class="close" data-notify="dismiss" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                `,
+            }
+        )
+    }
+
     image = (input, output, mode, size) => {
         input.addEventListener('change', (e) => {
             e.preventDefault()
@@ -143,19 +204,25 @@ const util = (() => {
         })
     }
 
-    const request = (url, method, useToken, object, contentType) => {
+    const request = (object) => {
         return new Promise((resolve, reject) => {
-            const token = `Bearer ${document.body.dataset.token}`
+            const token = document.body.dataset.token
 
-            const headers = {}
+            const { url, method, body, headers } = object
 
-            if (contentType) headers['content-type'] = contentType
+            const options = {
+                method: method || `GET`,
+                headers: {
+                    authorization: `Bearer ${token}`,
+                },
+            }
 
-            const body = object || null
+            if (headers) options.headers['content-type'] = headers['content-type']
+            if (headers) options.headers.Accept = headers.Accept
 
-            if (useToken) headers.authorization = token
+            if (body) options.body = body
 
-            fetch(`/api/${url}`, { method, headers, body })
+            fetch(url, options)
                 .then((r) => r.json())
                 .then((res) => {
                     if (res.error) return reject(res.error)
@@ -195,6 +262,9 @@ const util = (() => {
         scroll,
         validateSlug,
         newRequest,
+        serialize,
+        resetForm,
+        notify,
     }
 })()
 
@@ -221,6 +291,59 @@ if (allprods) {
         }
     })
 }
+
+if (document.querySelector('input.cpf'))
+    var cpf = new Cleave('input.cpf', {
+        delimiters: ['.', '.', '-'],
+        blocks: [3, 3, 3, 2],
+        uppercase: true,
+    })
+
+if (document.querySelector('input.rg'))
+    var rg = new Cleave('input.rg', {
+        delimiters: ['.', '.', '-'],
+        blocks: [2, 3, 3, 1],
+        uppercase: true,
+    })
+
+if (document.querySelector('input.zipCode'))
+    var cep = new Cleave('input.zipCode', {
+        delimiters: ['-'],
+        blocks: [5, 3],
+        uppercase: true,
+    })
+
+if (document.querySelector('input#phone'))
+    var phones = new Cleave('input#phone', {
+        phone: true,
+        phoneRegionCode: 'BR',
+    })
+
+if (document.querySelector('input#cell'))
+    var cell = new Cleave('input#cell', {
+        phone: true,
+        phoneRegionCode: 'BR',
+    })
+
+const cleaveMoney = {
+    numeral: true,
+    prefix: 'R$ ',
+    numeralDecimalScale: 2,
+}
+
+if (document.querySelector('.iptu')) var iptu = new Cleave('input#iptu', cleaveMoney)
+
+if (document.querySelector('.condominium')) var condominium = new Cleave('input#condominium', cleaveMoney)
+
+if (document.querySelector('.water')) var water = new Cleave('input#water', cleaveMoney)
+
+if (document.querySelector('.energy')) var energy = new Cleave('input#energy', cleaveMoney)
+
+if (document.querySelector('.trash')) var trash = new Cleave('input#trash', cleaveMoney)
+
+if (document.querySelector('.cleaningFee')) var cleaningFee = new Cleave('input#cleaningFee', cleaveMoney)
+
+if (document.querySelector('.othersValues')) var othersValues = new Cleave('input#othersValues', cleaveMoney)
 
 const btnValidat = document.querySelector('.btnAnchor')
 

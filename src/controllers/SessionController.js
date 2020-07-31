@@ -6,49 +6,35 @@ class SessionController {
         try {
             const { email, password, gToken } = req.body
 
-            const options = {
-                method: 'POST',
-                url: `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${gToken}`,
-                headers: { 'content-type': 'application/json' },
+            const expiration = process.env.EXPIRATION_TOKEN === 'testing' ? 60 : 1440
+
+            //super and administrator
+            const user = await User.findOne({ where: { email } })
+
+            if (!user) {
+                return res.status(401).json({ error: 'User not found' })
             }
 
-            request(options, async (error, response, body) => {
-                if (error) throw new Error(error)
+            if (!(await user.checkPassword(password))) {
+                return res.status(401).json({ error: 'Incorrect Password' })
+            }
 
-                body = JSON.parse(body)
+            const userJson = user.toJSON()
 
-                if (!body.success && body.score < 0.5) return res.status(500).send({ error: `Verifique se é um robô` })
+            delete userJson.password_hash
+            delete userJson.passwordResetToken
+            delete userJson.passwordResetExpires
 
-                const expiration = process.env.EXPIRATION_TOKEN === 'testing' ? 60 : 1440
+            res.cookie('token', user.generateToken(), {
+                maxAge: expiration * 60000,
+                expires: new Date(Date.now() + expiration * 60000),
+                httpOnly: true,
+                //secure: false, // set to true if your using https
+            })
 
-                //super and administrator
-                const user = await User.findOne({ where: { email } })
-
-                if (!user) {
-                    return res.status(401).json({ error: 'User not found' })
-                }
-
-                if (!(await user.checkPassword(password))) {
-                    return res.status(401).json({ error: 'Incorrect Password' })
-                }
-
-                const userJson = user.toJSON()
-
-                delete userJson.password_hash
-                delete userJson.passwordResetToken
-                delete userJson.passwordResetExpires
-
-                res.cookie('token', user.generateToken(), {
-                    maxAge: expiration * 60000,
-                    expires: new Date(Date.now() + expiration * 60000),
-                    httpOnly: true,
-                    //secure: false, // set to true if your using https
-                })
-
-                return res.json({
-                    userJson,
-                    token: user.generateToken(),
-                })
+            return res.json({
+                userJson,
+                token: user.generateToken(),
             })
         } catch (error) {
             console.log(`Erro de sessão: `, error)

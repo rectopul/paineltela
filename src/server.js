@@ -35,6 +35,7 @@ app.engine(
         defaultLayout: `main`,
         extname: '.hbs',
         helpers: {
+            cleaveJS: require('cleave.js'),
             ifCond: (v1, v2, options) => {
                 if (v1 === v2) {
                     return options.fn(this)

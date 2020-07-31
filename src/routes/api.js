@@ -10,6 +10,12 @@ const UserImageController = require('../controllers/UserImageController')
 //session
 const SessionController = require('../controllers/SessionController')
 
+//Cliente
+const ClientController = require('../controllers/ClientController')
+
+//Property
+const PropertyController = require('../controllers/PropertyController')
+
 //API
 /* Forgot e Recuperação de senha */
 routes.post('/api/forgot', UserController.forgot)
@@ -24,6 +30,16 @@ routes.post('/api/user/image/:user_id', multer(multerConfig).single('file'), Use
 routes.put('/api/user/image', multer(multerConfig).single('file'), UserImageController.edit)
 routes.post('/api/forgot', UserController.forgot)
 routes.post('/api/reset', UserController.reset)
+
+//client
+routes.post(`/api/client`, ClientController.store)
+routes.get(`/api/client/:client_id`, ClientController.single)
+routes.delete(`/api/client/:client_id`, ClientController.destroy)
+routes.put(`/api/client/:client_id`, ClientController.update)
+
+//Property
+routes.post(`/api/property`, PropertyController.store)
+
 //session
 routes.post(`/api/login`, SessionController.store)
 
