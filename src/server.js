@@ -28,7 +28,7 @@ app.use(
 )
 
 //config
-//template angine
+//template engine
 app.engine(
     `hbs`,
     handlebars({
