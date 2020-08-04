@@ -67,7 +67,13 @@ class Property extends Model {
         )
     }
 
-    static associate(models) {}
+    static associate(models) {
+        this.hasOne(models.PropertyAddress, { foreignKey: 'property_id', as: 'address' })
+        this.hasOne(models.PropertyFeature, { foreignKey: 'property_id', as: 'feature' })
+        this.hasOne(models.PropertyInformation, { foreignKey: 'property_id', as: 'information' })
+        this.hasOne(models.PropertyValue, { foreignKey: 'property_id', as: 'value' })
+        this.hasMany(models.Location, { foreignKey: 'property_id', as: 'property' })
+    }
 }
 
 module.exports = Property

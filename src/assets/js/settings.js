@@ -46,6 +46,22 @@ const util = (() => {
         inputs.map((input) => (input.value = ``))
     }
 
+    const maskMoney = (input) => {
+        input.addEventListener('keyup', function (e) {
+            e.preventDefault()
+
+            $(input).maskMoney({ prefix: 'R$ ' })
+
+            /* var money = new Cleave(input, {
+                prefix: 'R$ ',
+            }) */
+
+            //console.log(currency(input.value, { symbol: 'R$' }))
+
+            //input.value = currency(input.value, { symbol: 'R$' })
+        })
+    }
+
     const notify = (params) => {
         const { icon, title, message, type } = params
         //Notify
@@ -204,6 +220,29 @@ const util = (() => {
         })
     }
 
+    const get = (url) => {
+        return new Promise((resolve, reject) => {
+            const token = document.body.dataset.token
+
+            const options = {
+                method: `GET`,
+                headers: {
+                    authorization: `Bearer ${token}`,
+                    'content-type': 'application.json',
+                },
+            }
+
+            fetch(url, options)
+                .then((r) => r.json())
+                .then((res) => {
+                    if (res.error) return reject(res.error)
+
+                    return resolve(res)
+                })
+                .catch((error) => reject(error))
+        })
+    }
+
     const request = (object) => {
         return new Promise((resolve, reject) => {
             const token = document.body.dataset.token
@@ -254,6 +293,40 @@ const util = (() => {
         return slug
     }
 
+    const delayed_methods = (label, callback, time) => {
+        if (typeof window.delayed_methods == 'undefined') {
+            window.delayed_methods = {}
+        }
+
+        delayed_methods[label] = Date.now()
+        var t = delayed_methods[label]
+
+        setTimeout(function () {
+            if (delayed_methods[label] != t) {
+                return
+            } else {
+                //console.log(arguments)
+                delayed_methods[label] = ''
+                callback
+            }
+        }, time || 500)
+    }
+
+    const dateEnd = (input, dateStart, dateEnd) => {
+        input.addEventListener('blur', (e) => {
+            const startDate = dateStart.value
+            const endDate = new Date(startDate)
+
+            endDate.setMonth(endDate.getMonth() + parseInt(input.value))
+
+            const date = endDate.toISOString().substr(0, 10)
+
+            console.log(date)
+
+            dateEnd.value = date
+        })
+    }
+
     return {
         //public var/functions
         image,
@@ -265,8 +338,19 @@ const util = (() => {
         serialize,
         resetForm,
         notify,
+        get,
+        delayed_methods,
+        dateEnd,
+        maskMoney,
     }
 })()
+
+//Set date in blur mouths
+const inputStart = document.querySelector('input#locationStart')
+const inputEnd = document.querySelector('input#locationEnd')
+const inputMonth = document.querySelector('input#locationTime')
+
+if (inputStart && inputEnd && inputMonth) util.dateEnd(inputMonth, inputStart, inputEnd)
 
 const allprods = document.querySelector('.nav-link.dropdown-toggle')
 const hoverMenu = document.querySelector('.nav-item.dropdown')
@@ -328,7 +412,13 @@ if (document.querySelector('input#cell'))
 const cleaveMoney = {
     numeral: true,
     prefix: 'R$ ',
-    numeralDecimalScale: 2,
+    rawValueTrimPrefix: true,
+}
+
+const inputsMoney = [...document.querySelectorAll('input.moneyValue')]
+
+if (inputsMoney) {
+    inputsMoney.forEach((input) => util.maskMoney(input))
 }
 
 if (document.querySelector('.iptu')) var iptu = new Cleave('input#iptu', cleaveMoney)

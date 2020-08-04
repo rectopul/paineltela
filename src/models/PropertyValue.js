@@ -11,9 +11,6 @@ class PropertyValue extends Model {
                         isDecimal: {
                             msg: `The IPTU field is a decimal`,
                         },
-                        notNull: {
-                            msg: `The iptu field cannot be empty`,
-                        },
                         notEmpty: {
                             msg: `The iptu field cannot be empty`,
                         },

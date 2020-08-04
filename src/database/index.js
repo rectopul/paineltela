@@ -18,6 +18,9 @@ const PropertyFeature = require('../models/PropertyFeature')
 const PropertyInformation = require('../models/PropertyInformation')
 const PropertyValue = require('../models/PropertyValue')
 
+//Location
+const Location = require('../models/Location')
+
 //user
 User.init(connection)
 UserImage.init(connection)
@@ -30,6 +33,8 @@ PropertyAddress.init(connection)
 PropertyFeature.init(connection)
 PropertyInformation.init(connection)
 PropertyValue.init(connection)
+//Location
+Location.init(connection)
 
 //associations
 User.associate(connection.models)
@@ -44,5 +49,7 @@ PropertyAddress.associate(connection.models)
 PropertyFeature.associate(connection.models)
 PropertyInformation.associate(connection.models)
 PropertyValue.associate(connection.models)
+//Location
+Location.associate(connection.models)
 
 module.exports = connection

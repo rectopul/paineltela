@@ -2,6 +2,7 @@ const Client = require('../models/Client')
 const Contact = require('../models/Contact')
 const Address = require('../models/Address')
 const UserByToken = require('../middlewares/userByToken')
+const { Op } = require('sequelize')
 
 module.exports = {
     async index(req, res) {
@@ -48,6 +49,60 @@ module.exports = {
         }
 
         return res.json(client)
+    },
+    async search(req, res) {
+        try {
+            const authHeader = req.headers.authorization
+
+            if (!authHeader) return res.status(401).send({ error: 'No token provided' })
+
+            await UserByToken(authHeader)
+
+            const { args } = req.params
+
+            const { type } = req.query
+
+            const client = await Client.findAll({
+                where: {
+                    [Op.or]: [
+                        {
+                            name: {
+                                [Op.like]: `%${args}%`,
+                            },
+                            type: {
+                                [Op.eq]: type,
+                            },
+                        },
+                        {
+                            note: {
+                                [Op.like]: `%${args}%`,
+                            },
+                            type: {
+                                [Op.eq]: type,
+                            },
+                        },
+                    ],
+                },
+            })
+
+            return res.json(client)
+        } catch (error) {
+            //Validação de erros
+            if (error.name == `JsonWebTokenError`) return res.status(400).send({ error })
+
+            if (
+                error.name == `SequelizeValidationError` ||
+                error.name == `SequelizeUniqueConstraintError` ||
+                error.name == `userToken`
+            )
+                return res.status(400).send({
+                    error: error.message.replace(/(?:\r\n|\r|\n)/g, '<br>').replace(/(Validation error: )/g, ''),
+                })
+
+            console.log(`Erro ao buscar cliente: `, error)
+
+            return res.status(500).send({ error: `Erro de servidor` })
+        }
     },
 
     async store(req, res) {

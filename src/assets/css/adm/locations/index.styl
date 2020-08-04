@@ -1,0 +1,31 @@
+.bootstrap-tagsinput
+    border 1px solid #dee2e6
+    width 100%
+    height calc(1.5em + 1.25rem + 2px)
+    padding 0 .35rem
+    font-weight 400
+    display flex
+    align-items center
+    font-size: .875rem
+
+.responseProperty,
+.responseOwner,
+.responseCard
+    display none
+    width 100%
+    &.show
+        display block
+    & tr
+        cursor pointer
+
+.inputWrapper
+    position relative
+    & .responseCard
+        position absolute
+        left 5px
+        top 100%
+        z-index 9
+.Child
+    display none
+    &.show
+        display block

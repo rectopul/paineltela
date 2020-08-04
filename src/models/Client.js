@@ -119,6 +119,9 @@ class Client extends Model {
     static associate(models) {
         this.hasOne(models.Address, { foreignKey: 'client_id', as: 'address' })
         this.hasOne(models.Contact, { foreignKey: 'client_id', as: 'contact' })
+        this.hasMany(models.Location, { foreignKey: 'owner_id', as: 'owner' })
+        this.hasMany(models.Location, { foreignKey: 'occupant_id', as: 'occupant' })
+        this.hasMany(models.Location, { foreignKey: 'guarantor_id', as: 'guarantor' })
     }
 }
 

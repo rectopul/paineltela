@@ -234,14 +234,88 @@ const client = (() => {
         })
     }
 
+    const get = async (args, type, container) => {
+        try {
+            //const find = args.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+
+            const clients = await util.get(`/api/client_search/${args}?type=${type}`)
+
+            container.innerHTML = ``
+
+            container.closest('.responseCard').classList.add('show')
+
+            return clients.map((client) => container.append(createClient(client, container)))
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const createClient = (object, container) => {
+        const tr = document.createElement('tr')
+
+        const input = container.closest('.inputWrapper').querySelector('input.searching')
+
+        const { name, cpf, gender, type } = object
+
+        tr.innerHTML = `
+            <th>${name}</th>
+            <th>${cpf}</th>
+            <th>${gender}</th>
+            <th>${type}</th>
+        `
+
+        //click result
+
+        tr.addEventListener('click', (e) => {
+            e.preventDefault()
+
+            $(input).tagsinput('removeAll')
+
+            $(input).tagsinput('add', name)
+
+            container.closest('.responseCard').classList.remove('show')
+        })
+
+        return tr
+    }
+
+    const search = (input, type) => {
+        input.addEventListener('keyup', (e) => {
+            const container = input.closest('.inputWrapper').querySelector('.resultList')
+
+            if (!input.value.length) {
+                return container.closest('.responseCard').classList.remove('show')
+            }
+
+            if (input.value && input.value.length > 3) {
+                util.delayed_methods('check date parallel', get(input.value, type, container))
+            }
+        })
+    }
+
     return {
         //public var/functions
         create,
         show,
         destroy,
         edit,
+        search,
     }
 })()
+
+//Search Fiador
+const inputGuarantor = document.querySelector('.guarantorTag input[type="text"]')
+
+if (inputGuarantor) client.search(inputGuarantor, `fiador`)
+
+//Search proprietário
+const inputOwner = document.querySelector('.ownerTag input[type="text"]')
+
+if (inputOwner) client.search(inputOwner, `proprietário`)
+
+const inputOccupant = document.querySelector('.occupantTag input[type="text"]')
+
+if (inputOccupant) client.search(inputOccupant, `inquilino`)
 
 //formEditClient
 const formEditClient = document.querySelector('.formEditClient')

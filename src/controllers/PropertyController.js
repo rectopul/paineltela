@@ -7,6 +7,7 @@ const PropertyFeature = require('../models/PropertyFeature')
 const PropertyInformation = require('../models/PropertyInformation')
 const PropertyValue = require('../models/PropertyValue')
 const UserByToken = require('../middlewares/userByToken')
+const { Op } = require('sequelize')
 
 module.exports = {
     async index(req, res) {
@@ -35,6 +36,58 @@ module.exports = {
         }
     },
 
+    async search(req, res) {
+        try {
+            const authHeader = req.headers.authorization
+
+            if (!authHeader) return res.status(401).send({ error: 'No token provided' })
+
+            await UserByToken(authHeader)
+
+            const { args } = req.params
+
+            const property = await Property.findAll({
+                where: {
+                    [Op.or]: [
+                        {
+                            name: {
+                                [Op.like]: `%${args}%`,
+                            },
+                        },
+                        {
+                            description: {
+                                [Op.like]: `%${args}%`,
+                            },
+                        },
+                        {
+                            property_is: {
+                                [Op.like]: `%${args}%`,
+                            },
+                        },
+                    ],
+                },
+            })
+
+            return res.json(property)
+        } catch (error) {
+            //Validação de erros
+            if (error.name == `JsonWebTokenError`) return res.status(400).send({ error })
+
+            if (
+                error.name == `SequelizeValidationError` ||
+                error.name == `SequelizeUniqueConstraintError` ||
+                error.name == `userToken`
+            )
+                return res.status(400).send({
+                    error: error.message.replace(/(?:\r\n|\r|\n)/g, '<br>').replace(/(Validation error: )/g, ''),
+                })
+
+            console.log(`Erro ao buscar imóvel: `, error)
+
+            return res.status(500).send({ error: `Erro de servidor` })
+        }
+    },
+
     async single(req, res) {
         const authHeader = req.headers.authorization
 
@@ -42,17 +95,22 @@ module.exports = {
 
         await UserByToken(authHeader)
 
-        const { client_id } = req.params
+        const { property_id } = req.params
 
-        const client = await Client.findByPk(client_id, {
-            include: [{ association: 'address' }, { association: 'contact' }],
+        const property = await Property.findByPk(property_id, {
+            include: [
+                { association: 'address' },
+                { association: 'feature' },
+                { association: 'information' },
+                { association: 'value' },
+            ],
         })
 
-        if (!client) {
-            return res.status(401).json({ message: 'client not found' })
+        if (!property) {
+            return res.status(401).json({ message: 'Property not found' })
         }
 
-        return res.json(client)
+        return res.json(property)
     },
 
     async store(req, res) {
@@ -99,7 +157,7 @@ module.exports = {
                 bedrooms: parseInt(bedrooms),
                 suites: suites || 0,
                 demiSuites: demiSuites || 0,
-                bathrooms: parseInt(bathrooms),
+                bathrooms: parseInt(bathrooms) || 0,
                 toilet: toilet || 0,
                 jobs: jobs | 0,
                 flooring: flooring || 0,

@@ -1,5 +1,5 @@
 const userByToken = require('../../../middlewares/auth')
-const Client = require('../../../models/Client')
+const Property = require('../../../models/Property')
 const User = require('../../../models/User')
 
 module.exports = {
@@ -37,25 +37,32 @@ module.exports = {
 
             const user = await User.findByPk(user_id)
 
-            const clients = await Client.findAll({ include: [{ association: `address` }, { association: `contact` }] })
+            const properties = await Property.findAll({
+                include: [
+                    { association: `address` },
+                    { association: `information` },
+                    { association: `value` },
+                    { association: `feature` },
+                ],
+            })
 
-            const clientsMap = clients.map((client) => {
-                const cliente = client.toJSON()
+            const proper = properties.map((property) => {
+                const propriedade = property.toJSON()
 
-                const { createdAt } = cliente
+                const { createdAt } = propriedade
 
                 const data = new Intl.DateTimeFormat('pt-BR').format(new Date(createdAt))
 
-                cliente.createdAt = data
+                propriedade.createdAt = data
 
-                return cliente
+                return propriedade
             })
 
-            return res.render('admin/clients', {
+            return res.render('admin/properties', {
                 pageClasses: ``,
-                title: `Listagem de cliente`,
+                title: `Listagem de Imóveis`,
                 page: `client`,
-                clients: clientsMap ? clientsMap : null,
+                properties: proper ? proper : null,
                 token,
                 user: user.toJSON(),
             })

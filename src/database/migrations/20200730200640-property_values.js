@@ -19,7 +19,6 @@ module.exports = {
             },
             iptu: {
                 type: Sequelize.DECIMAL,
-                allowNull: false,
             },
             condominium: {
                 type: Sequelize.DECIMAL,
