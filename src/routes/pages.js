@@ -1,15 +1,5 @@
 const routes = require('express').Router()
 
-const { Op } = require('sequelize')
-
-const User = require('../models/User')
-
-//userbytoken
-const authUser = require('../middlewares/auth')
-
-//Views
-const UsersView = require('../controllers/views/UsersViews')
-
 //Dashboard
 const DashboardView = require('../controllers/views/DashboardViews')
 //Login
@@ -20,10 +10,6 @@ const ProductView = require('../controllers/views/admin/ProductView')
 const PropertyView = require('../controllers/views/admin/PropertyView')
 //Location
 const LocationView = require('../controllers/views/admin/LocationView')
-
-const CleaveJs = require('cleave.js')
-
-routes.get('/cleave', CleaveJs)
 
 //Dashboard
 routes.get(`/dashboard`, DashboardView.view)

@@ -2,7 +2,6 @@ const routes = require('express').Router()
 
 const multer = require('multer')
 const multerConfig = require('../config/multer')
-const multerText = require('../config/multerText')
 
 const UserController = require('../controllers/UserController')
 //User Image

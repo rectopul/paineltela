@@ -16,7 +16,7 @@ require('./database')
 
 const app = express()
 
-app.use(requestIp.mw())
+//app.use(requestIp.mw())
 
 //sessão
 app.use(
