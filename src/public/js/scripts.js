@@ -715,7 +715,7 @@ const product = (() => {
                     <a href="#" class="avatar rounded-circle mr-3">
                         ${
                             image.url
-                                ? `<img alt="Image placeholder" src="//${image.url}">`
+                                ? `<img alt="Image placeholder" src="${image.url}">`
                                 : `<img alt="Image placeholder" src="https://via.placeholder.com/200">`
                         }
                     </a>
