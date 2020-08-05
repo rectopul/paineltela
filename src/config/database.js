@@ -15,6 +15,7 @@ if (process.env.DATABASE_URL) {
         dialectOptions: {
             ssl: {
                 require: true,
+                rejectUnauthorized: false,
             },
         },
         host: 'ec2-52-72-221-20.compute-1.amazonaws.com',
