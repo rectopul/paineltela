@@ -47,10 +47,6 @@ module.exports = {
             password_reset_expires: {
                 type: Sequelize.DATE,
             },
-            type: {
-                type: Sequelize.STRING,
-                allowNull: false,
-            },
             created_at: {
                 type: Sequelize.DATE,
                 allowNull: false,

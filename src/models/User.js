@@ -23,7 +23,7 @@ class User extends Model {
                     type: DataTypes.STRING,
                     allowNull: false,
                     unique: {
-                        msg: `This email of user aready exist`,
+                        msg: `This email of user already exist`,
                     },
                     validate: {
                         notNull: {
@@ -46,18 +46,6 @@ class User extends Model {
                         },
                         notEmpty: {
                             msg: `The password cannot be empty`,
-                        },
-                    },
-                },
-                type: {
-                    type: DataTypes.STRING,
-                    allowNull: false,
-                    validate: {
-                        notNull: {
-                            msg: `The type field cannot be empty`,
-                        },
-                        notEmpty: {
-                            msg: `This field cannot be empty`,
                         },
                     },
                 },
@@ -120,6 +108,7 @@ class User extends Model {
                         }
                     },
                 },
+                modelName: 'User',
                 sequelize,
             }
         )

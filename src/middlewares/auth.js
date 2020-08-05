@@ -12,7 +12,10 @@ module.exports = async (authHeader) => {
                 message: `No token provided`,
             })
 
+        console.log(authHeader)
+
         try {
+            //console.log(jwt.verify(authHeader, process.env.APP_SECRET))
             decoded = jwt.verify(authHeader, process.env.APP_SECRET)
         } catch (error) {
             return reject(error)

@@ -1,55 +1,30 @@
 const Sequelize = require('sequelize')
 const dbConfig = require('../config/database')
 
-const connection = new Sequelize(dbConfig)
+//const connection = new Sequelize(dbConfig)
 
 const User = require('../models/User')
 const UserImage = require('../models/UserImage')
 
-//Clients
-const Client = require('../models/Client')
-const Address = require('../models/Address')
-const Contact = require('../models/Contact')
+//Product
+const Product = require('../models/Product')
 
-//Property
-const Property = require('../models/Property')
-const PropertyAddress = require('../models/PropertyAddress')
-const PropertyFeature = require('../models/PropertyFeature')
-const PropertyInformation = require('../models/PropertyInformation')
-const PropertyValue = require('../models/PropertyValue')
+const models = [User, UserImage, Product]
 
-//Location
-const Location = require('../models/Location')
+class DataBase {
+    constructor() {
+        this.init()
+    }
 
-//user
-User.init(connection)
-UserImage.init(connection)
-Client.init(connection)
-Address.init(connection)
-Contact.init(connection)
-//Property
-Property.init(connection)
-PropertyAddress.init(connection)
-PropertyFeature.init(connection)
-PropertyInformation.init(connection)
-PropertyValue.init(connection)
-//Location
-Location.init(connection)
+    init() {
+        // Inicializa conexao
+        this.connection = new Sequelize(dbConfig)
+        this.models = this.connection.models
 
-//associations
-User.associate(connection.models)
-UserImage.associate(connection.models)
-//Clients
-Client.associate(connection.models)
-Address.associate(connection.models)
-Contact.associate(connection.models)
-//Property
-Property.associate(connection.models)
-PropertyAddress.associate(connection.models)
-PropertyFeature.associate(connection.models)
-PropertyInformation.associate(connection.models)
-PropertyValue.associate(connection.models)
-//Location
-Location.associate(connection.models)
+        // Percorre o vetor e acessa o método inicializador
+        models.map((model) => model.init(this.connection))
+        models.map((model) => model.associate(this.models))
+    }
+}
 
-module.exports = connection
+module.exports = new DataBase()

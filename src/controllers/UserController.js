@@ -2,7 +2,8 @@ const User = require('../models/User')
 const UserImage = require('../models/UserImage')
 const crypto = require('crypto')
 const mailer = require('../modules/mailer')
-const UserByToken = require('../middlewares/auth')
+const UserByToken = require('../middlewares/userByToken')
+const Yup = require('yup')
 
 module.exports = {
     async index(req, res) {
@@ -36,18 +37,13 @@ module.exports = {
             if (Object.keys(req.body).length === 0)
                 return res.status(400).send({ error: `Por favor envie as infomações` })
 
-            const { name, email, phone, cell, password, type, image_id } = req.body
+            const { email, image_id, password } = req.body
 
-            const { user_id } = await UserByToken(authHeader)
-
-            const superUser = await User.findByPk(user_id)
+            await UserByToken(authHeader)
 
             const userMail = await User.findOne({ where: { email } })
 
             if (userMail) return res.status(401).json({ error: 'the email you entered is already registered' })
-            //sdad
-            if (superUser.type != `super` && type == `super`)
-                return res.status(401).json({ error: 'You are not allowed to register this type of user' })
 
             if (image_id) {
                 const checkImage = await UserImage.findByPk(image_id)
@@ -57,14 +53,19 @@ module.exports = {
                 }
             }
 
-            const user = await User.create({
-                name,
-                email,
-                password,
-                phone,
-                cell,
-                type: `super`,
+            if (typeof password !== `string`) return res.status(401).json({ error: 'The password is a string' })
+
+            const schema = Yup.object().shape({
+                name: Yup.string().required(),
+                email: Yup.string().email().required(),
+                password: Yup.string().required().min(6),
+                phone: Yup.string().required().min(10),
+                cell: Yup.string().required().min(10),
             })
+
+            await schema.validate(req.body, { abortEarly: false })
+
+            const user = await User.create(req.body)
 
             if (image_id) {
                 const avatar = await UserImage.findByPk(image_id)
@@ -74,12 +75,13 @@ module.exports = {
             return res.json(user)
         } catch (error) {
             //Validação de erros
-            if (error.name == `JsonWebTokenError`) return res.status(400).send({ error })
+            if (error.name == `JsonWebTokenError`) return res.status(400).send({ error: error.message })
 
             if (
                 error.name == `SequelizeValidationError` ||
                 error.name == `SequelizeUniqueConstraintError` ||
-                error.name == `userToken`
+                error.name == `userToken` ||
+                error.name == `ValidationError`
             )
                 return res.status(400).send({ error: error.message })
 
