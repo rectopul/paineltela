@@ -574,6 +574,10 @@ const product = (() => {
             form.addEventListener('submit', function (e) {
                 e.preventDefault()
 
+                const button = form.querySelector('button')
+
+                spiner(button)
+
                 const object = util.serialize(form)
 
                 util.request({
@@ -594,6 +598,13 @@ const product = (() => {
                 console.log(object)
             })
         })
+    }
+
+    const spiner = (container) => {
+        container.innerHTML = `
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>`
     }
 
     const productCreate = (form) => {
@@ -782,6 +793,11 @@ const product = (() => {
                 .then((res) => res.json())
                 .then((res) => {
                     util.resetForm(object.form)
+
+                    const button = object.form.querySelector('button')
+
+                    button.innerHTML = `Cadastrar Produto`
+
                     resolve(res)
                 })
                 .catch((error) => reject(error))
