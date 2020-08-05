@@ -17,6 +17,14 @@ class Product extends Model {
                         },
                     },
                 },
+                brand: {
+                    type: DataTypes.STRING,
+                    validate: {
+                        notEmpty: {
+                            msg: `The brand field cannot be empty`,
+                        },
+                    },
+                },
                 price: {
                     type: DataTypes.DECIMAL,
                     allowNull: false,
@@ -60,6 +68,7 @@ class Product extends Model {
 
     static associate(models) {
         //Relations
+        this.hasOne(models.ImageProduct, { foreignKey: 'product_id', as: 'image' })
     }
 }
 module.exports = Product

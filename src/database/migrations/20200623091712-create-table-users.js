@@ -25,8 +25,6 @@ module.exports = {
             },
             cell: {
                 type: Sequelize.STRING,
-                unique: true,
-                allowNull: false,
             },
             address: {
                 type: Sequelize.STRING,

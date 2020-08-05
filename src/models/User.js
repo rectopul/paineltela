@@ -65,25 +65,11 @@ class User extends Model {
                         notEmpty: {
                             msg: `The phone field cannot be empty`,
                         },
-                        is: {
-                            args: /(\(?\d{2}\)?\s)?(\d{4,5}-\d{4})/g,
-                            msg: `Please provide a valid phone number`,
-                        },
                     },
                 },
                 cell: {
                     type: DataTypes.STRING,
-                    allowNull: false,
-                    unique: {
-                        msg: `This cell of store aready exist`,
-                    },
                     validate: {
-                        notNull: {
-                            msg: `The cell field cannot be empty`,
-                        },
-                        notEmpty: {
-                            msg: `The cell field cannot be empty`,
-                        },
                         is: {
                             args: /(\(?\d{2}\)?\s)?(\d{4,5}-\d{4})/g,
                             msg: `Please provide a valid cell number`,

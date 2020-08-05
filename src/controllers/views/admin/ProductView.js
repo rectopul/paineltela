@@ -1,6 +1,7 @@
 const userByToken = require('../../../middlewares/auth')
 const Client = require('../../../models/Client')
 const User = require('../../../models/User')
+const Product = require('../../../models/Product')
 
 module.exports = {
     async view(req, res) {
@@ -37,25 +38,13 @@ module.exports = {
 
             const user = await User.findByPk(user_id)
 
-            const clients = await Client.findAll({ include: [{ association: `address` }, { association: `contact` }] })
+            const products = await Product.findAll({ include: { association: `image` } })
 
-            const clientsMap = clients.map((client) => {
-                const cliente = client.toJSON()
-
-                const { createdAt } = cliente
-
-                const data = new Intl.DateTimeFormat('pt-BR').format(new Date(createdAt))
-
-                cliente.createdAt = data
-
-                return cliente
-            })
-
-            return res.render('admin/clients', {
+            return res.render('admin/products', {
                 pageClasses: ``,
-                title: `Listagem de cliente`,
-                page: `client`,
-                clients: clientsMap ? clientsMap : null,
+                title: `Listagem de Produtos`,
+                page: `products`,
+                products: products ? products.map((product) => product.toJSON()) : null,
                 token,
                 user: user.toJSON(),
             })

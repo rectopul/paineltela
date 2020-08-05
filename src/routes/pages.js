@@ -15,7 +15,7 @@ const DashboardView = require('../controllers/views/DashboardViews')
 //Login
 const LoginView = require('../controllers/views/admin/LoginViews')
 //Client
-const ClientView = require('../controllers/views/admin/ClientView')
+const ProductView = require('../controllers/views/admin/ProductView')
 //Property
 const PropertyView = require('../controllers/views/admin/PropertyView')
 //Location
@@ -28,8 +28,7 @@ routes.get('/cleave', CleaveJs)
 //Dashboard
 routes.get(`/dashboard`, DashboardView.view)
 //Client
-routes.get(`/insert_client`, ClientView.view)
-routes.get(`/clients`, ClientView.index)
+routes.get(`/products`, ProductView.index)
 
 //Properties
 routes.get(`/property_insert`, PropertyView.store)

@@ -243,6 +243,29 @@ const util = (() => {
         })
     }
 
+    const del = (url) => {
+        return new Promise((resolve, reject) => {
+            const token = document.body.dataset.token
+
+            const options = {
+                method: `DELETE`,
+                headers: {
+                    authorization: `Bearer ${token}`,
+                    'content-type': 'application.json',
+                },
+            }
+
+            fetch(url, options)
+                .then((r) => r.json())
+                .then((res) => {
+                    if (res.error) return reject(res.error)
+
+                    return resolve(res)
+                })
+                .catch((error) => reject(error))
+        })
+    }
+
     const request = (object) => {
         return new Promise((resolve, reject) => {
             const token = document.body.dataset.token
@@ -339,6 +362,7 @@ const util = (() => {
         resetForm,
         notify,
         get,
+        del,
         delayed_methods,
         dateEnd,
         maskMoney,
@@ -397,8 +421,8 @@ if (document.querySelector('input.zipCode'))
         uppercase: true,
     })
 
-if (document.querySelector('input#phone'))
-    var phones = new Cleave('input#phone', {
+if (document.querySelector('input.phoneInput'))
+    var phones = new Cleave('input.phoneInput', {
         phone: true,
         phoneRegionCode: 'BR',
     })

@@ -8,8 +8,9 @@ const UserImage = require('../models/UserImage')
 
 //Product
 const Product = require('../models/Product')
+const ImageProduct = require('../models/ImageProduct')
 
-const models = [User, UserImage, Product]
+const models = [User, UserImage, Product, ImageProduct]
 
 class DataBase {
     constructor() {

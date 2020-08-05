@@ -60,7 +60,6 @@ module.exports = {
                 email: Yup.string().email().required(),
                 password: Yup.string().required().min(6),
                 phone: Yup.string().required().min(10),
-                cell: Yup.string().required().min(10),
             })
 
             await schema.validate(req.body, { abortEarly: false })

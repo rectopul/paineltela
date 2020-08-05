@@ -1,0 +1,62 @@
+<div class="card">
+    <div class="card-header border-0">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="mb-0">Lista de Produtos</h3>
+            </div>
+            <div class="col text-right">
+                <a href="/products" class="btn btn-sm btn-primary">Ver todos</a>
+            </div>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <!-- Projects table -->
+        <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Preço</th>
+                    <th scope="col">Marca</th>
+                    <th scope="col">Estoque</th>
+                    <th scope="col">Ações</th>
+                </tr>
+            </thead>
+            <tbody class="productList">
+                {{#each products}}
+                <tr>
+                    <th scope="row">
+                        <div class="media align-items-center">
+                            <a href="#" class="avatar rounded-circle mr-3">
+                                {{#if image}}
+                                <img alt="Image placeholder" src="//{{image.url}}">
+                                {{else}}
+                                <img alt="Image placeholder" src="https://via.placeholder.com/200">
+                                {{/if}}
+
+                            </a>
+                            <div class="media-body">
+                                <span class="name mb-0 text-sm">
+                                    {{name}} <br>
+                                    <small>cod: {{barcode}}</small>
+                                </span>
+                            </div>
+                        </div>
+                    </th>
+                    <td>
+                        {{price}}
+                    </td>
+                    <td>
+                        {{brand}}
+                    </td>
+                    <td>
+                        <i class="fas fa-arrow-up text-success mr-3"></i> {{stock}}
+                    </td>
+                    <td>
+                        <button class="btn btn-warning" data-id="{{id}}"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div>
