@@ -8,7 +8,7 @@ const routes = express.Router()
 //const credentials = require('./middlewares/UserCredentials')
 
 //Test de rota
-routes.get(`/`, (req, res) => res.json({ error: `Not found` }))
+routes.get(`/`, (req, res) => res.redirect('/dashboard'))
 routes.use(cookieParser())
 
 routes.use(pages)
