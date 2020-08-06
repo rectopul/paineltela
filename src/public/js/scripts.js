@@ -488,84 +488,6 @@ if (btnValidat) util.scroll(btnValidat)
     )
 })()
 
-//formLogin
-const login = (() => {
-    //private var/functions
-    const login = (form) => {
-        form.addEventListener('submit', (e) => {
-            e.preventDefault()
-
-            const user = util.serialize(form)
-
-            return util
-                .request({
-                    url: `/api/login`,
-                    method: `POST`,
-                    headers: {
-                        'content-type': 'application/json',
-                    },
-                    body: JSON.stringify(user),
-                })
-                .then((res) => (window.location.href = `/dashboard`))
-                .catch((err) => console.log(err))
-        })
-    }
-
-    const register = (form) => {
-        form.addEventListener('submit', function (e) {
-            e.preventDefault()
-
-            const object = util.serialize(form)
-
-            const modal = form.closest('.modal')
-
-            return util
-                .request({
-                    url: `/api/user`,
-                    method: `POST`,
-                    headers: {
-                        'content-type': 'application/json',
-                    },
-                    body: JSON.stringify(object),
-                })
-                .then((res) => {
-                    $(modal).modal('hide')
-
-                    $(modal).on('hidden.bs.modal', function (e) {
-                        // do something...
-
-                        Swal.fire('Usuário criado', `Usuário ${res.name} criado com sucesso`, 'success')
-
-                        return $(this).off('hidden.bs.modal')
-                    })
-                })
-                .catch((err) => {
-                    return util.notify({
-                        icon: `alert-icon ni ni-bell-55`,
-                        title: 'Atenção! alguns erros foram encontrados!',
-                        message: err,
-                        type: 'warning',
-                    })
-                })
-        })
-    }
-
-    return {
-        //public var/functions
-        login,
-        register,
-    }
-})()
-
-//Register
-const formRegister = document.querySelector('.formRegister')
-
-if (formRegister) login.register(formRegister)
-
-const formLogin = document.querySelector('.formLogin')
-
-if (formLogin) login.login(formLogin)
-
 const product = (() => {
     const table = $('.dataTable').DataTable()
     //private var/functions
@@ -687,8 +609,6 @@ const product = (() => {
 
             const form = modal.querySelector('form')
 
-            console.log(form.elements['name'])
-
             util.get(`/api/product/${id}`).then((res) => {
                 const { name, price, brand, stock, id, barcode } = res
 
@@ -766,7 +686,6 @@ const product = (() => {
     }
 
     const image = (object) => {
-        console.log(object)
         return new Promise((resolve, reject) => {
             const { id: product_id } = object.data
 
@@ -889,4 +808,87 @@ $('.dataTable').on('draw.dt', function () {
     const btnProductDestroy = [...document.querySelectorAll('.productDestroy')]
 
     if (btnProductDestroy) btnProductDestroy.map((btn) => product.destroy(btn))
+
+    //editProduct
+    const btnEditProduct = [...document.querySelectorAll('.editProduct')]
+
+    if (btnEditProduct) btnEditProduct.map((btn) => product.openModal(btn))
 })
+
+//formLogin
+const login = (() => {
+    //private var/functions
+    const login = (form) => {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault()
+
+            const user = util.serialize(form)
+
+            return util
+                .request({
+                    url: `/api/login`,
+                    method: `POST`,
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                    body: JSON.stringify(user),
+                })
+                .then((res) => (window.location.href = `/dashboard`))
+                .catch((err) => console.log(err))
+        })
+    }
+
+    const register = (form) => {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault()
+
+            const object = util.serialize(form)
+
+            const modal = form.closest('.modal')
+
+            return util
+                .request({
+                    url: `/api/user`,
+                    method: `POST`,
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                    body: JSON.stringify(object),
+                })
+                .then((res) => {
+                    $(modal).modal('hide')
+
+                    $(modal).on('hidden.bs.modal', function (e) {
+                        // do something...
+
+                        Swal.fire('Usuário criado', `Usuário ${res.name} criado com sucesso`, 'success')
+
+                        return $(this).off('hidden.bs.modal')
+                    })
+                })
+                .catch((err) => {
+                    return util.notify({
+                        icon: `alert-icon ni ni-bell-55`,
+                        title: 'Atenção! alguns erros foram encontrados!',
+                        message: err,
+                        type: 'warning',
+                    })
+                })
+        })
+    }
+
+    return {
+        //public var/functions
+        login,
+        register,
+    }
+})()
+
+//Register
+const formRegister = document.querySelector('.formRegister')
+
+if (formRegister) login.register(formRegister)
+
+const formLogin = document.querySelector('.formLogin')
+
+if (formLogin) login.login(formLogin)

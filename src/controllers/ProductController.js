@@ -50,7 +50,7 @@ module.exports = {
             const product = await Product.create({
                 name,
                 brand: brand || null,
-                price,
+                price: price,
                 barcode: barcode || null,
                 stock: stock || null,
             })

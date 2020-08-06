@@ -119,8 +119,6 @@ const product = (() => {
 
             const form = modal.querySelector('form')
 
-            console.log(form.elements['name'])
-
             util.get(`/api/product/${id}`).then((res) => {
                 const { name, price, brand, stock, id, barcode } = res
 
@@ -198,7 +196,6 @@ const product = (() => {
     }
 
     const image = (object) => {
-        console.log(object)
         return new Promise((resolve, reject) => {
             const { id: product_id } = object.data
 
@@ -321,4 +318,9 @@ $('.dataTable').on('draw.dt', function () {
     const btnProductDestroy = [...document.querySelectorAll('.productDestroy')]
 
     if (btnProductDestroy) btnProductDestroy.map((btn) => product.destroy(btn))
+
+    //editProduct
+    const btnEditProduct = [...document.querySelectorAll('.editProduct')]
+
+    if (btnEditProduct) btnEditProduct.map((btn) => product.openModal(btn))
 })
