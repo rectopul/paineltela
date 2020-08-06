@@ -1,7 +1,7 @@
 const request = require('request')
 const url = process.env.MELHORENVIO_URL
 
-module.exports = {
+/* module.exports = {
     async refreshToken(params) {
         return new Promise((resolve, reject) => {
             const { refreshToken, client_id, client_secret } = params
@@ -24,4 +24,4 @@ module.exports = {
             })
         })
     },
-}
+} */

@@ -16,7 +16,7 @@ const sendMail = (msg) => {
             .send(msg)
             .then((res) => resolve(res))
             .catch((err) => {
-                console.log(err.response.body)
+                //console.log(err.response.body)
                 reject({
                     name: `sendGridSender`,
                     message: err.response.body,
@@ -31,7 +31,7 @@ const sendMailGmail = (msg) => {
             .send(msg)
             .then((res) => resolve(res))
             .catch((err) => {
-                console.log(err.response.body)
+                //console.log(err.response.body)
                 reject({
                     name: `sendGridSender`,
                     message: err.response.body,
@@ -92,4 +92,4 @@ transport.use(
     })
 )
 
-module.exports = transport
+//module.exports = transport

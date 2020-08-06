@@ -20,17 +20,19 @@ module.exports = {
                 },
             }
 
-            request(options, (error, response, body) => {
+            return resolve()
+
+            /* request(options, (error, response, body) => {
                 if (error) return reject(`Erro`, error)
 
                 list = JSON.parse(response.toJSON().body)
 
-                console.log(list.status)
+                //console.log(list.status)
 
                 if (list.status == 401) return reject({ name: `mailchimpError`, message: list.detail })
 
                 return resolve(list)
-            })
+            }) */
         })
     },
 

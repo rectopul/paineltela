@@ -40,7 +40,9 @@ module.exports = {
 
             const { product_id } = req.params
 
-            let { originalname: name, size, key, location: url = '' } = req.file
+            //console.log(`File req: `, req.file)
+
+            let { originalname: name, size, key, Location: url } = req.file
 
             const image = await ImageProduct.create({
                 name,

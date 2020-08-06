@@ -11,7 +11,7 @@ module.exports = {
                 secretKey,
             })
         } catch (error) {
-            console.log(error)
+            //console.log(error)
             return res.redirect('/login')
         }
     },

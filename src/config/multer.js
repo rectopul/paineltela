@@ -3,6 +3,8 @@ const path = require('path')
 const crypto = require('crypto')
 const aws = require('aws-sdk')
 const multerS3 = require('multer-s3')
+const sharp = require('sharp')
+const sharpS3 = require('multer-sharp-s3')
 
 const storageTypes = {
     local: multer.diskStorage({
@@ -19,12 +21,13 @@ const storageTypes = {
             })
         },
     }),
-    s3: multerS3({
+    s3: sharpS3({
         s3: new aws.S3(),
-        bucket: 'uploadwecheckout',
+        Bucket: 'uploadwecheckout',
         contentType: multerS3.AUTO_CONTENT_TYPE,
-        acl: 'public-read',
-        key: (req, file, cb) => {
+        ACL: 'public-read',
+        Key: (req, file, cb) => {
+            //console.log(`file S3`, file)
             crypto.randomBytes(16, (err, hash) => {
                 if (err) cb(err)
 
@@ -33,6 +36,10 @@ const storageTypes = {
                 cb(null, filename)
             })
         },
+        resize: {
+            width: 300,
+        },
+        max: true,
     }),
 }
 
@@ -42,7 +49,7 @@ module.exports = {
     limits: {
         fileSize: 15 * 1024 * 1024,
     },
-    fileFilter: (req, file, cb) => {
+    fileFilter: async (req, file, cb) => {
         const allowedMines = ['image/jpeg', 'image/pjpeg', 'image/png', 'image/gif']
 
         if (allowedMines.includes(file.mimetype)) {
@@ -55,3 +62,33 @@ module.exports = {
         }
     },
 }
+
+/* var upload = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: 'some-bucket',
+        shouldTransform: function (req, file, cb) {
+            cb(null, /^image/i.test(file.mimetype))
+        },
+        transforms: [
+            {
+                id: 'original',
+                key: function (req, file, cb) {
+                    cb(null, 'image-original.jpg')
+                },
+                transform: function (req, file, cb) {
+                    cb(null, sharp().jpg())
+                },
+            },
+            {
+                id: 'thumbnail',
+                key: function (req, file, cb) {
+                    cb(null, 'image-thumbnail.jpg')
+                },
+                transform: function (req, file, cb) {
+                    cb(null, sharp().resize(100, 100).jpg())
+                },
+            },
+        ],
+    }),
+}) */

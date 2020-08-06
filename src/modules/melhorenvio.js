@@ -245,7 +245,7 @@ module.exports = {
                 }
             )
         } catch (error) {
-            console.log(error)
+            //console.log(error)
             return res.status(400).send({ error })
         }
     },
@@ -302,7 +302,7 @@ module.exports = {
 
             //console.log(`Retorno do axios`, urlEnvio)
         } catch (error) {
-            console.log(error)
+            //console.log(error)
             return res.status(400).send({ error })
         }
     },
@@ -401,7 +401,7 @@ module.exports = {
                 })
             })
         } catch (error) {
-            console.log(error)
+            //console.log(error)
             return res.status(400).send({ error })
         }
     },

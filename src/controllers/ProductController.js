@@ -2,7 +2,6 @@ const User = require('../models/User')
 const Product = require('../models/Product')
 const UserImage = require('../models/UserImage')
 const crypto = require('crypto')
-const mailer = require('../modules/mailer')
 const UserByToken = require('../middlewares/userByToken')
 const Yup = require('yup')
 

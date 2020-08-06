@@ -16,10 +16,6 @@ module.exports = {
 
             const products = await Product.findAll({ limit: 25, include: { association: `image` } })
 
-            products.map((producto, key) => {
-                if (key == 4) console.log(producto.toJSON())
-            })
-
             return res.render('dashboard', {
                 title: `Dashboard`,
                 page: `dashboard`,

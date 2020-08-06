@@ -571,57 +571,55 @@ const product = (() => {
     //private var/functions
     const create = (form) => {
         return new Promise((resolve, reject) => {
-            form.addEventListener('submit', function (e) {
-                e.preventDefault()
+            const button = form.querySelector('button')
 
-                const button = form.querySelector('button')
+            spiner(button)
 
-                spiner(button)
+            const object = util.serialize(form)
 
-                const object = util.serialize(form)
-
-                util.request({
-                    url: `/api/product`,
-                    method: `POST`,
-                    headers: {
-                        'content-type': 'application/json',
-                    },
-                    body: JSON.stringify(object),
-                })
-                    .then((res) => {
-                        return resolve({ data: res, form: form })
-                    })
-                    .catch((err) => {
-                        return reject(err)
-                    })
-
-                console.log(object)
+            util.request({
+                url: `/api/product`,
+                method: `POST`,
+                headers: {
+                    'content-type': 'application/json',
+                },
+                body: JSON.stringify(object),
             })
+                .then((res) => {
+                    return resolve({ data: res, form: form })
+                })
+                .catch((err) => {
+                    return reject(err)
+                })
         })
     }
 
     const spiner = (container) => {
-        container.innerHTML = `
+        return (container.innerHTML = `
         <div class="spinner-border text-success" role="status">
             <span class="sr-only">Loading...</span>
-        </div>`
+        </div>`)
     }
 
     const productCreate = (form) => {
-        return create(form)
-            .then(image)
-            .then((res) => {
-                dash(res)
-                return Swal.fire('Cadastrado', `Produto ${res.name} cadastrado com sucesso`, 'success')
-            })
-            .catch((err) => {
-                return util.notify({
-                    icon: `alert-icon ni ni-bell-55`,
-                    title: 'Atenção! alguns erros foram encontrados!',
-                    message: err,
-                    type: 'warning',
+        form.addEventListener('submit', function (e) {
+            e.preventDefault()
+
+            return create(form)
+                .then(image)
+                .then((res) => {
+                    dash(res)
+                    return Swal.fire('Cadastrado', `Produto ${res.name} cadastrado com sucesso`, 'success')
                 })
-            })
+                .catch((err) => {
+                    return util.notify({
+                        icon: `alert-icon ni ni-bell-55`,
+                        title: 'Atenção! alguns erros foram encontrados!',
+                        message: err,
+                        type: 'warning',
+                    })
+                })
+        })
     }
 
     const dash = (object) => {
@@ -769,13 +767,12 @@ const product = (() => {
 
     const image = (object) => {
         console.log(object)
-        //console.log(data)
         return new Promise((resolve, reject) => {
             const { id: product_id } = object.data
 
             const file = object.form.elements['file'].files[0]
 
-            //console.log(file)
+            console.log(file)
 
             if (!file) return resolve(object.data)
 
@@ -798,7 +795,7 @@ const product = (() => {
 
                     button.innerHTML = `Cadastrar Produto`
 
-                    resolve(res)
+                    return resolve(res)
                 })
                 .catch((error) => reject(error))
         })
