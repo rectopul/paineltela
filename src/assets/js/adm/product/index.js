@@ -316,3 +316,9 @@ if (btnProductStore) product.create(btnProductStore)
 const btnProductDestroy = [...document.querySelectorAll('.productDestroy')]
 
 if (btnProductDestroy) btnProductDestroy.map((btn) => product.destroy(btn))
+
+$('.dataTable').on('draw.dt', function () {
+    const btnProductDestroy = [...document.querySelectorAll('.productDestroy')]
+
+    if (btnProductDestroy) btnProductDestroy.map((btn) => product.destroy(btn))
+})
