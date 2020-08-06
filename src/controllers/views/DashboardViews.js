@@ -14,7 +14,7 @@ module.exports = {
 
             const user = await User.findByPk(user_id)
 
-            const products = await Product.findAll({ limit: 25, include: { association: `image` } })
+            const products = await Product.findAll({ limit: 10, include: { association: `image` } })
 
             return res.render('dashboard', {
                 title: `Dashboard`,
