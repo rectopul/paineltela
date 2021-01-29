@@ -1,6 +1,7 @@
 const userByToken = require('../../middlewares/auth')
 const User = require('../../models/User')
-const Product = require('../../models/Product')
+const Client = require('../../models/Client')
+const { Op } = require('sequelize')
 
 module.exports = {
     async view(req, res) {
@@ -12,16 +13,24 @@ module.exports = {
             const { user_id } = await userByToken(token)
             //userName
 
-            const user = await User.findByPk(user_id)
+            const clients = await Client.findAll({
+                where: {
+                    [Op.not]: { status: 'finish' },
+                },
+                include: { association: `operator` },
+            })
 
-            const products = await Product.findAll({ limit: 10, include: { association: `image` } })
+            const theClients = clients.map((client) => client.toJSON())
+
+            const user = await User.findByPk(user_id)
 
             return res.render('dashboard', {
                 title: `Dashboard`,
                 page: `dashboard`,
                 token,
                 user: user.toJSON(),
-                products: products.map((prod) => prod.toJSON()),
+                clients: theClients,
+                panel: true,
             })
         } catch (error) {
             console.log(error)

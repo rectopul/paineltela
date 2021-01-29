@@ -4,13 +4,9 @@ const dbConfig = require('../config/database')
 //const connection = new Sequelize(dbConfig)
 
 const User = require('../models/User')
-const UserImage = require('../models/UserImage')
+const Client = require('../models/Client')
 
-//Product
-const Product = require('../models/Product')
-const ImageProduct = require('../models/ImageProduct')
-
-const models = [User, UserImage, Product, ImageProduct]
+const models = [User, Client]
 
 class DataBase {
     constructor() {

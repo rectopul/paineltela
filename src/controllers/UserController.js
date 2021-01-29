@@ -37,39 +37,25 @@ module.exports = {
             if (Object.keys(req.body).length === 0)
                 return res.status(400).send({ error: `Por favor envie as infomações` })
 
-            const { email, image_id, password } = req.body
+            const { name, user, password } = req.body
 
             await UserByToken(authHeader)
 
-            const userMail = await User.findOne({ where: { email } })
+            const username = await User.findOne({ where: { user } })
 
-            if (userMail) return res.status(401).json({ error: 'the email you entered is already registered' })
-
-            if (image_id) {
-                const checkImage = await UserImage.findByPk(image_id)
-
-                if (!checkImage) {
-                    return res.status(401).json({ error: `This image_id not exist` })
-                }
-            }
+            if (username) return res.status(401).json({ error: 'Este usuário já está cadastrado' })
 
             if (typeof password !== `string`) return res.status(401).json({ error: 'The password is a string' })
 
             const schema = Yup.object().shape({
                 name: Yup.string().required(),
-                email: Yup.string().email().required(),
+                user: Yup.string().required(),
                 password: Yup.string().required().min(6),
-                phone: Yup.string().required().min(10),
             })
 
             await schema.validate(req.body, { abortEarly: false })
 
             const user = await User.create(req.body)
-
-            if (image_id) {
-                const avatar = await UserImage.findByPk(image_id)
-                if (!avatar.user_id || avatar.user_id == user.id) await avatar.update({ user_id: user.id })
-            }
 
             return res.json(user)
         } catch (error) {

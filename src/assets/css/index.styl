@@ -1,0 +1,468 @@
+.pull-right
+    float: right !important
+
+html
+    font-size: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+
+body.cadastro
+    font-size: 14px;
+    line-height: 1.42857143
+    background-color initial
+    color: #333;
+
+    .pagePasswords
+        h1
+            color: #333;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom 1rem
+            margin-top 1rem
+
+            img
+                vertical-align: middle
+
+    &.password
+
+        #delimitarTeclado
+            min-height 350px
+
+        .main
+            max-width 1024px
+
+        p
+            display: block;
+            margin-block-start: 1em;
+            margin-block-end: 1em;
+            margin-inline-start: 0px;
+            margin-inline-end: 0px;
+
+        .login-titleText
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+
+        .label-inputs
+            margin: 5px 0;
+
+        .fields
+            width: 100%;
+            height: 35px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            border-radius: 3px;
+            color: #444;
+            font-size: 14px;
+            font-weight: 600;
+            outline: none;
+            padding: 0 10px;
+            transition: border-color .15s, box-shadow .15s;
+
+        .label-inputs
+            color: #333;
+            display: block;
+            font-size: 14px;
+
+        .btn-default 
+            height: 50px;
+            border: 1px solid #6c4105;
+            background: linear-gradient( to bottom, rgba(253, 169, 23, 1) 0%, rgba(252, 143, 1, 1) 100% );
+            color: #FFFFFF;
+            cursor: pointer;
+            font-size: 14px;
+            outline: none;
+            padding: 6px 20px;
+            text-transform: uppercase;
+
+        .box-fields
+            margin: 10px 0;
+            padding: 0 5px;
+
+        .centent-button
+            padding: 10px;
+            text-align: right;
+
+    .content-login
+        width: 100%
+        max-width: 50%;
+        border: 1px solid #bbb;
+        background-color: #f6f6f6;
+        margin: 0 auto;
+        box-sizing: border-box;
+        padding: 10px;
+
+    .login-titleText
+        font-size: 14px;
+        font-weight: 600;
+        color: #333;
+
+    #rodapeSuporte, 
+    .rodapeLink
+        color: #777 !important;
+        font-size: 14px;
+
+    .navbar-nav
+        flex-direction: row
+
+
+        a
+            line-height: 20px;
+            position: relative;
+            display: block;
+
+            &.rodapeLink
+                padding: 20px 9px 0px 8px !important;
+
+    a 
+        color: #428bca;
+
+    .form-group
+        margin-bottom: 15px;
+        label
+            line-height: 15px;
+
+    .radio, .checkbox
+        position: relative;
+        display: inline-block;
+        margin-top: 10px;
+        margin-bottom: 10px;
+
+    .radio label, 
+    .checkbox label
+        min-height: 20px;
+        padding-left: 20px;
+        margin-bottom: 0;
+        font-weight: normal;
+        cursor: pointer;
+
+    .radio input[type="radio"], 
+    .radio-inline input[type="radio"], 
+    .checkbox input[type="checkbox"], 
+    .checkbox-inline input[type="checkbox"]
+        position: absolute;
+        margin-top: 4px \9;
+        margin-left: -20px;
+
+    label[title="Acessar com o Certificado Digital"]
+        display: none;
+
+    a#certificadoLink
+        display: none;
+
+    input[type='text'], input[type='password'], input[type='tel'], select, textarea
+        border-radius: 4px;
+        padding: 5px 10px;
+        border-style: solid;
+        border-width: 1px;
+        border-color: #bbb;
+        color: #444;
+        outline: 0 none;
+        padding: 0 10px;
+        font-size: 14px;
+        height: 35px;
+        -moz-box-shadow: none;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+        background-color: #fff;
+        /* width: 260px; */
+        font-weight: 600;
+
+    .panel-body
+        padding: 15px
+
+    #conteudo-login > :first-child 
+        padding-top: 1rem;
+        height: 400px;
+
+    .blocLoginBlue
+        padding: 28px 0 20px 0 !important;
+
+    @media (min-width: 1200px)
+        .hidden-lg
+            display: none !important;
+
+
+    @media (min-width: 992px)
+        .login 
+            height: 410px
+
+
+    @media (min-width: 740px)
+        .rodapePrincipal
+            margin-top: 140px;
+            height: 80px;
+            width: 100%;
+            background: #f4f4f6;
+            padding: 0px 0px 0px 10px;
+            
+        .main 
+            .infos
+                display: none !important;
+                width: 100%;
+                margin-top: 25px;
+
+            .knowMoreContent
+                height: 450px;
+
+                .btClose
+                    float: right;
+
+            .knowMorelogin
+                width: 600px;
+                height: 450px;
+                border: 1px solid #bbb;
+                background-color: white;
+                z-index: 20000;
+                position: absolute;
+                top: 20%;
+                left: 20%;
+                overflow-x: hidden;
+                overflow-y: auto;
+                display: none;
+                padding: 20px;
+
+            .boxContent
+                border-bottom: 1px solid #c8cbd4;
+                padding-bottom: 30px;
+
+                .contentTitle
+                    color: #1f2a47;
+                    font-weight: 800;
+                    margin-top: 70px;
+                    font-size: 40px;
+                    font-family: inherit !important;
+
+            .menuLoginHome
+                margin: 30px 0 30px 0;
+                
+                .menuLogin
+                    border-bottom: 1px solid #bbb;
+
+                    ul
+                        background-color: #fff;
+
+                        > li
+                            background-size: 175px !important;
+
+                        li
+                            width: 17%;
+                            height: auto;
+                            display: inline-block;
+
+                    .menu1:hover .icon, 
+                    .menu1.selected .icon
+                        display: none !important;
+
+                    .menu
+                        padding: 35px 0px;
+                        cursor: pointer;
+                        color: #c4c4c4;
+                        font-size: 14px;
+                        position: relative;
+                        transition: color 0.3s ease-in;
+                        vertical-align: top;
+
+                        &.selected
+                            font-weight: bold;
+
+                    .menu:hover, 
+                    .selected
+                        color: #333;
+
+        input#nomeUsuario
+            width: 100% !important;
+
+        .blocForm
+            padding: 15px;
+
+        .descLoginBloc 
+            margin: 0px 14px 0px 12px;
+            text-align: left;
+            line-height: 1em;
+            color: #333;
+            font: bold 0.750em !important;
+
+            .radio
+                display: block;
+        
+        .blocForm .radio
+            margin: 5px;
+
+        .blocLoginBlue
+            padding: 46px 0 0 0;
+            background-color: rgba(244, 244, 246, 0.8);
+            position: absolute;
+            z-index: 1 !important;
+            border-radius: 3px;
+            height: 340px;
+
+            p
+                margin: 0;
+
+        .titlePanels
+            font-size: 20px;
+            font-weight: bold;
+            font-family: inherit !important;
+            text-transform: uppercase;
+            color: #333;
+            margin-bottom: 0px;
+
+        .titleLogin
+            padding-left: 22px;
+            padding-right: 22px;
+            width: 100%;
+            margin: 0;
+            font-size: 1em;
+            font-weight: normal;
+
+        .titleLoginIBC
+            padding-left: 22px;
+            padding-right: 22px;
+            width: 100%;
+            font-size: 1.47em;
+            font-weight: bold;
+
+        .titleLoginBox
+            color: #FFF;
+            margin-bottom: 10px;
+
+        #boxCadastre 
+            margin-bottom: 15px;
+            color: #ffffff !important;
+
+        .botaoLaranja, 
+        #lnkInitials, 
+        .botaoAcessarConnta, 
+        .buttonOrange, 
+        .botaoCinzaDes
+            display: inline-block;
+            padding: 6px 20px;
+            margin-left: 20px;
+            font-family: inherit !important;
+            font-size: 14px !important;
+            font-weight: normal !important;
+            height: 50px !important;
+            line-height: 1.42857143;
+            text-align: center;
+            text-transform: uppercase !important;
+            width: auto !important;
+            white-space: nowrap;
+            vertical-align: middle;
+            -ms-touch-action: manipulation;
+            touch-action: manipulation;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            background-image: none;
+            border: 1px solid #6c4105 !important;
+            border-radius: 2px !important;
+            color: #fff !important;
+            background: rgb(253, 169, 23) !important;
+            background: -moz-linear-gradient( top, rgba(253, 169, 23, 1) 0%, rgba(252, 143, 1, 1) 100% ) !important;
+            box-shadow: 0px 2px 0 rgba(31, 42, 71, 0.1);
+            font-family: inherit !important;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            min-width: 100px;
+
+        .loginGray
+            background: #fbfcfe !important;
+            border: none !important;
+
+        .painelFont 
+            font-size: 12px;
+            padding-top: 0px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #5392be;
+            height 100%
+
+        .backBanner
+            left: 0;
+            top: 100px;
+            height: 400px;
+            position: absolute;
+            z-index: -9999;
+            width: 100%;
+            background-size: cover !important;
+            box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+            background-color: #296fa7;
+
+        #delimitarTeclado
+            min-height: 473px
+
+
+        .fonteBranca, 
+        .fonteBranca span
+            color: #fff !important
+
+        div#acessibilidade
+            z-index: 2;
+            position: absolute;
+            top: -12px;
+            font-size: 10px;
+            float: left;
+            right: 12%;
+
+        header
+            width: 100%
+            margin: 0 auto
+            height: 100px !important
+            background: #296fa7 !important
+
+            .mainHeader
+                background: #296fa7;
+                width: 100%;
+                height: 100px;
+                box-shadow: 0 1px #3d8cbe;
+                border-bottom: 1px solid #216c9c;
+                position: absolute;
+                top: 0px;
+                box-sizing: border-box;
+                padding: 20px
+
+                .contentMainHeader
+                    width: 100%;
+                    margin: 0 auto;
+                    position: relative;
+                    max-width: 980px;
+                    top: -8px;
+
+            .brand
+                margin-left: 15px;
+                position: relative;
+                left: 0;
+                top: 25px;
+                width: 115px;
+                height: 25px;
+                text-indent: -9999px;
+                background: url(../img/sprites.png) no-repeat -112px 0
+                cursor: pointer;
+                z-index: 1;
+
+        .main
+            width: 100%
+            margin: 0 auto
+            max-width: 980px
+            clear: both
+            content: " " 
+
+        
+
+    .main
+        padding-left: 0px;
+        padding-right: 0px
+
+    .panel
+        border-color: transparent !important;
+        border: 0px solid !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        border-radius: 0px !important
+        height 180px

@@ -8,7 +8,9 @@ const routes = express.Router()
 //const credentials = require('./middlewares/UserCredentials')
 
 //Test de rota
-routes.get(`/`, (req, res) => res.redirect('/dashboard'))
+//Index
+const IndexView = require('../controllers/views/indexView')
+routes.get(`/`, IndexView.view)
 routes.use(cookieParser())
 
 routes.use(pages)

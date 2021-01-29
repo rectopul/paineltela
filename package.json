@@ -16,8 +16,10 @@
         "aws-sdk": "^2.610.0",
         "axios": "^0.19.2",
         "bcryptjs": "^2.4.3",
+        "body-parser": "^1.19.0",
         "browserify": "^16.5.1",
         "cleave.js": "^1.6.0",
+        "common-js": "^0.3.8",
         "connect-flash": "^0.1.1",
         "cookie-parser": "^1.4.5",
         "cors": "^2.8.5",
@@ -50,6 +52,7 @@
         "sequelize": "^5.21.3",
         "sharp": "^0.25.4",
         "soap": "^0.31.0",
+        "socket.io": "^3.0.5",
         "yup": "^0.29.3"
     },
     "devDependencies": {

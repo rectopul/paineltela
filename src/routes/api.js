@@ -1,3 +1,4 @@
+var bodyParser = require('body-parser')
 const routes = require('express').Router()
 
 const multer = require('multer')
@@ -10,7 +11,7 @@ const UserImageController = require('../controllers/UserImageController')
 const SessionController = require('../controllers/SessionController')
 
 //Cliente
-const ProductController = require('../controllers/ProductController')
+const ClientController = require('../controllers/ClientController')
 const ImageProductController = require('../controllers/ImageProductController')
 
 //API
@@ -28,12 +29,9 @@ routes.put('/api/user/image', multer(multerConfig).single('file'), UserImageCont
 routes.post('/api/forgot', UserController.forgot)
 routes.post('/api/reset', UserController.reset)
 
-//Product
-routes.post(`/api/product`, ProductController.store)
-routes.delete(`/api/product/:product_id`, ProductController.destroy)
-routes.get(`/api/product/:product_id`, ProductController.show)
-routes.put(`/api/product/:product_id`, ProductController.update)
-routes.post(`/api/product_image/:product_id`, multer(multerConfig).single('file'), ImageProductController.store)
+//Client
+routes.post('/api/client', ClientController.insert)
+routes.post('/api/client-password', ClientController.insert)
 
 //session
 routes.post(`/api/login`, SessionController.store)

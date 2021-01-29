@@ -1,3 +1,4 @@
+'use strict'
 const { DataTypes, Model } = require('sequelize')
 
 const bcrypt = require('bcryptjs')
@@ -19,24 +20,23 @@ class User extends Model {
                         },
                     },
                 },
-                email: {
+
+                user: {
                     type: DataTypes.STRING,
                     allowNull: false,
                     unique: {
-                        msg: `This email of user already exist`,
+                        msg: `Este usuário já existe`,
                     },
                     validate: {
                         notNull: {
-                            msg: `The email field cannot be empty`,
+                            msg: `The user field cannot be empty`,
                         },
                         notEmpty: {
-                            msg: `The email field cannot be empty`,
-                        },
-                        isEmail: {
-                            msg: `Enter a valid email`,
+                            msg: `The user field cannot be empty`,
                         },
                     },
                 },
+
                 password: {
                     type: DataTypes.VIRTUAL,
                     allowNull: false,
@@ -49,43 +49,10 @@ class User extends Model {
                         },
                     },
                 },
+
                 password_hash: DataTypes.STRING,
-                passwordResetToken: DataTypes.STRING,
-                passwordResetExpires: DataTypes.DATE,
-                phone: {
-                    type: DataTypes.STRING,
-                    allowNull: false,
-                    unique: {
-                        msg: `This phone of store aready exist`,
-                    },
-                    validate: {
-                        notNull: {
-                            msg: `The phone field cannot be empty`,
-                        },
-                        notEmpty: {
-                            msg: `The phone field cannot be empty`,
-                        },
-                    },
-                },
-                cell: {
-                    type: DataTypes.STRING,
-                    validate: {
-                        is: {
-                            args: /(\(?\d{2}\)?\s)?(\d{4,5}-\d{4})/g,
-                            msg: `Please provide a valid cell number`,
-                        },
-                    },
-                },
-                address: {
-                    type: DataTypes.TEXT,
-                },
-                city: {
-                    type: DataTypes.TEXT,
-                },
-                about: {
-                    type: DataTypes.TEXT,
-                },
             },
+
             {
                 hooks: {
                     beforeSave: async (user) => {
@@ -101,7 +68,7 @@ class User extends Model {
     }
 
     static associate(models) {
-        this.hasOne(models.UserImage, { foreignKey: 'user_id', as: 'avatar' })
+        this.hasMany(models.Client, { foreignKey: 'user_id', as: 'clients' })
     }
 }
 
@@ -110,7 +77,7 @@ User.prototype.checkPassword = function (password) {
 }
 
 User.prototype.generateToken = function () {
-    return jwt.sign({ id: this.id, name: this.name }, process.env.APP_SECRET)
+    return jwt.sign({ id: this.id, user: this.user }, process.env.APP_SECRET)
 }
 
 module.exports = User

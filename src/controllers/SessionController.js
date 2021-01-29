@@ -4,19 +4,19 @@ const request = require('request')
 class SessionController {
     async store(req, res) {
         try {
-            const { email, password, gToken } = req.body
+            const { user: theUser, password, gToken } = req.body
 
             const expiration = process.env.EXPIRATION_TOKEN === 'testing' ? 60 : 1440
 
             //super and administrator
-            const user = await User.findOne({ where: { email } })
+            const user = await User.findOne({ where: { user: theUser } })
 
             if (!user) {
-                return res.status(401).json({ error: 'User not found' })
+                return res.redirect('/login')
             }
 
             if (!(await user.checkPassword(password))) {
-                return res.status(401).json({ error: 'Incorrect Password' })
+                return res.redirect('/login')
             }
 
             const userJson = user.toJSON()
@@ -32,9 +32,13 @@ class SessionController {
                 //secure: false, // set to true if your using https
             })
 
-            return res.json({
-                userJson,
+            return res.redirect('/dashboard')
+
+            return res.render('dashboard', {
+                title: `Dashboard`,
+                page: `dashboard`,
                 token: user.generateToken(),
+                user: user.toJSON(),
             })
         } catch (error) {
             console.log(`Erro de sessão: `, error)

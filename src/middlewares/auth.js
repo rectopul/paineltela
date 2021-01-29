@@ -19,10 +19,12 @@ module.exports = async (authHeader) => {
             return reject(error)
         }
 
-        const { id, name } = decoded
+        const { id, user } = decoded
+
+        console.log(id)
 
         // Fetch the user by id
-        const UserExist = await User.findOne({ where: { id, name } })
+        const UserExist = await User.findOne({ where: { id, user } })
 
         if (!UserExist)
             return reject({
