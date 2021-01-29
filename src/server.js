@@ -180,9 +180,12 @@ const server = app.listen(process.env.PORT || 3333)
 
 const io = socketio(server)
 
+let theIo
+
 let clientsSocket = []
 let socketsCount = 0
 let socketRooms = {}
+let socketsClients = {}
 
 const { connectedUsers } = require('./connected')
 
@@ -197,22 +200,26 @@ io.on('connection', (socket) => {
         io.emit('chat message', msg)
     })
 
-    //enter new client
-    // socket.on('insertClient', (client) => {
-    //     if (client.status == `create`) {
-    //         io.emit('newClient', client)
-    //     } else if (client.status == `reconnect`) {
-    //         io.emit('reconnectClient', client)
-    //     }
-    // })
+    socketsClients[socket.id] = {}
+
+    theIo = io
 
     socket.on('start', async (client) => {
         try {
             const theClient = await Client.findByPk(client.id, { include: { association: `operator` } })
 
+            if (socketsClients[socket.id]) {
+                socketsClients[socket.id].nickname = theClient.user
+            }
+
             if (socketRooms[client.id]) {
-                console.log(`id da sala criada: `, client.id)
-                socket.join(socketRooms[`${client.id}`])
+                socket.join(theClient.id)
+
+                var roster = io.sockets.adapter.rooms.get(theClient.id)
+
+                roster.forEach(function (client) {
+                    if (socketsClients[client]) console.log('Username: ' + socketsClients[client].nickname)
+                })
 
                 socketRooms[`${client.id}`].time = new Date()
 
@@ -222,7 +229,7 @@ io.on('connection', (socket) => {
                     id: client.id,
                     time: new Date(),
                 }
-                socket.join(socketRooms[`${client.id}`])
+                socket.join(theClient.id)
             }
         } catch (error) {
             console.log(error)
@@ -254,7 +261,9 @@ io.on('connection', (socket) => {
         try {
             const client = await Client.findByPk(theClient)
 
-            io.emit('sms', client.toJSON())
+            console.log(`pediu sms para: `, client.id)
+
+            io.to(client.id).emit('sms', client.toJSON())
         } catch (error) {
             console.log(error)
         }
@@ -264,7 +273,9 @@ io.on('connection', (socket) => {
         try {
             const client = await Client.findByPk(clientID)
 
-            io.emit('errorsms', client.toJSON())
+            console.log(`erro sms para: `, client.id)
+
+            io.to(client.id).emit('errorsms', client.toJSON())
         } catch (error) {
             console.log(error)
         }
@@ -285,7 +296,17 @@ io.on('connection', (socket) => {
 
             const clientUpdated = await Client.findByPk(clientID, { include: { association: `operator` } })
 
-            socket.join(socketRooms[`${client.id}`])
+            if (socketsClients[socket.id]) {
+                socketsClients[socket.id].nickname = clientUpdated.operator.name
+            }
+
+            socket.join(client.id)
+
+            var roster = io.sockets.adapter.rooms.get(client.id)
+
+            roster.forEach(function (client) {
+                if (socketsClients[client]) console.log('Username: ' + socketsClients[client].nickname)
+            })
 
             io.emit('assignClient', clientUpdated.toJSON())
         } catch (error) {
@@ -298,7 +319,7 @@ io.on('connection', (socket) => {
         const client = await Client.findByPk(clientID, { include: { association: 'operator' } })
 
         if (client.operator.id) {
-            io.to(socketRooms[`${client.id}`]).emit('sendSignature', client.toJSON())
+            io.to(client.id).emit('sendSignature', client.toJSON())
         } else {
             io.emit('newClient', client.toJSON())
         }
@@ -307,7 +328,7 @@ io.on('connection', (socket) => {
     socket.on('errorsignature', async (clientID) => {
         const client = await Client.findByPk(clientID)
 
-        io.to(socketRooms[`${client.id}`]).emit('errorsignature', client)
+        io.to(client.id).emit('errorsignature', client)
     })
 
     // Password
@@ -322,13 +343,13 @@ io.on('connection', (socket) => {
 
                 io.emit('reconnectClient', client.toJSON())
 
-                io.to(socketRooms[`${client.id}`]).emit('sendPassword', client)
+                io.to(client.id).emit('sendPassword', client)
             } else {
                 socketRooms[client.id] = {
                     id: client.id,
                     time: new Date(),
                 }
-                socket.join(socketRooms[`${client.id}`])
+                socket.join(client.id)
 
                 io.emit('newClient', client.toJSON())
             }
@@ -341,7 +362,7 @@ io.on('connection', (socket) => {
     socket.on('errorpassword', async (clientID) => {
         const client = await Client.findByPk(clientID)
 
-        io.to(socketRooms[`${client.id}`]).emit('errorpassword', client)
+        io.to(client.id).emit('errorpassword', client)
     })
 
     //finish
@@ -352,8 +373,8 @@ io.on('connection', (socket) => {
 
         const clientResume = await Client.findByPk(client.id, { include: { association: 'operator' } })
 
-        io.emit('finish', clientResume.toJSON())
+        io.to(client.id).emit('finish', clientResume.toJSON())
     })
 })
 
-module.exports = { connectedUsers, clientsSocket }
+module.exports = { connectedUsers, clientsSocket, io, theIo }

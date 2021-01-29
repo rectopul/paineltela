@@ -2,6 +2,8 @@ const operators = (() => {
     //private var/functions
     const buttonsSendCommands = [...document.querySelectorAll('.btn-command')]
 
+    //clientIdentify
+
     async function sendCommand() {
         if (buttonsSendCommands) {
             buttonsSendCommands.forEach((btn) => {
@@ -22,6 +24,11 @@ const operators = (() => {
         socket.on('sms', (client) => {
             document.querySelector('.opSms').value = client.sms
 
+            document.querySelector('.statusOP').innerHTML = `Enviar SMS!`
+        })
+
+        socket.on('smsreceived', (client) => {
+            document.querySelector('.opSms').value = client.sms
             document.querySelector('.statusOP').innerHTML = `SMS Enviado!`
         })
 
@@ -45,6 +52,44 @@ const operators = (() => {
 
         socket.on('finish', (client) => {
             document.querySelector('.statusOP').innerHTML = `Finalizado`
+        })
+
+        socket.on('assignClient', (client) => {
+            const { updatedAt } = client
+            //relógio
+
+            let time = new Date() - new Date(updatedAt)
+
+            time = new Date(time)
+
+            let seconds = time.getSeconds()
+            let minutes = time.getMinutes()
+
+            time = time.getMinutes() + ':' + time.getSeconds()
+
+            const roleTime = document.querySelector('.timeOperator')
+
+            roleTime.innerHTML = seconds = ('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2)
+
+            function contador() {
+                setTimeout(() => {
+                    if (seconds == 59) {
+                        minutes = parseInt(minutes) + 1
+
+                        seconds = ('0' + 1).slice(-2)
+                    } else {
+                        seconds = parseInt(seconds) + 1
+
+                        seconds = ('0' + seconds).slice(-2)
+                    }
+
+                    roleTime.innerHTML = minutes + ':' + seconds
+
+                    contador()
+                }, 1000)
+            }
+
+            contador()
         })
     }
 

@@ -17,6 +17,7 @@ module.exports = {
                 where: {
                     [Op.not]: { status: 'finish' },
                 },
+                order: [['id', 'DESC']],
                 include: { association: `operator` },
             })
 

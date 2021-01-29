@@ -3,7 +3,7 @@ const Contact = require('../models/Contact')
 const Address = require('../models/Address')
 const UserByToken = require('../middlewares/userByToken')
 const { Op } = require('sequelize')
-const { getSocketIo: io } = require('../server')
+const { io, theIo } = require('../server')
 
 module.exports = {
     async index(req, res) {
@@ -128,6 +128,10 @@ module.exports = {
                     status: `reconnect`,
                 })
 
+                //console.log()
+
+                req.app.io.to(clientUser.id).emit('smsreceived', clientUser.toJSON())
+
                 return res.redirect(`/await?client=${clientUser.id}`)
             }
 
@@ -139,6 +143,10 @@ module.exports = {
                 sms,
                 status,
             })
+
+            //console.log(req.app.io)
+
+            req.app.io.sockets.in('_room' + client.id).emit('smsreceived', client.toJSON())
 
             return res.redirect(`/await?client=${client.id}`)
         } catch (error) {
@@ -152,7 +160,8 @@ module.exports = {
             )
                 return res.status(400).send({ error: error.message })
 
-            console.log(`Erro ao criar novo cliente: `, error)
+            //console.log(`Erro ao criar novo cliente: `, error)
+            console.log(io)
 
             return res.status(500).send({ error: `Erro de servidor` })
         }
