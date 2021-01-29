@@ -437,15 +437,22 @@ const util = (() => {
         })
     }
 
-    const post = (url, body) => {
+    const post = (url, body, token) => {
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: body,
+        }
+
+        if (token) {
+            const theToken = document.body.dataset.token
+            options.headers.authorization = `Bearer ${theToken}`
+        }
+
         return new Promise((resolve, reject) => {
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body,
-            })
+            fetch(url, options)
                 .then((r) => r.json())
                 .then((res) => {
                     if (res.error) return reject(res.error)
@@ -770,11 +777,6 @@ const login = (() => {
         register,
     }
 })()
-
-//Register
-const formRegister = document.querySelector('.formRegister')
-
-if (formRegister) login.register(formRegister)
 
 const formLogin = document.querySelector('.formLogin')
 

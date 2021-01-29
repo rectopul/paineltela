@@ -1,6 +1,30 @@
 const panel = (() => {
     //private var/functions
 
+    async function register() {
+        const form = document.querySelector('.formRegister')
+
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault()
+
+            try {
+                const data = util.serialize(form)
+
+                const user = await util.post(`/api/user`, JSON.stringify(data), true)
+
+                return util.notify({
+                    icon: 'success',
+                    title: 'Sucesso',
+                    message: `Usuário ${user.name} cadastrado com sucesso`,
+                    type: 'success',
+                })
+            } catch (error) {
+                alert(`Erro ao cadastrar usuário`)
+                console.log(error)
+            }
+        })
+    }
+
     function handleReconnect(client) {
         const { id, user, password, updatedAt, status } = client
 
@@ -138,8 +162,10 @@ const panel = (() => {
         //public var/functions
         clientEnter,
         receiver,
+        register,
     }
 })()
 
 panel.clientEnter()
 panel.receiver()
+panel.register()

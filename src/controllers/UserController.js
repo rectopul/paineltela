@@ -34,10 +34,14 @@ module.exports = {
             //Get user id by token
             const authHeader = req.headers.authorization
 
+            if (!authHeader) return res.status(401).json({ error: 'Falha de autenticação' })
+
             if (Object.keys(req.body).length === 0)
                 return res.status(400).send({ error: `Por favor envie as infomações` })
 
-            const { name, user, password } = req.body
+            const { name, user, password, type } = req.body
+
+            console.log(`body received`, req.body)
 
             await UserByToken(authHeader)
 
@@ -55,7 +59,12 @@ module.exports = {
 
             await schema.validate(req.body, { abortEarly: false })
 
-            const createUser = await User.create(req.body)
+            const createUser = await User.create({
+                name,
+                user,
+                password,
+                type,
+            })
 
             return res.json(createUser)
         } catch (error) {
@@ -83,41 +92,19 @@ module.exports = {
             if (Object.keys(req.body).length === 0)
                 return res.status(400).send({ error: `Por favor envie as infomações` })
 
-            const { name, email, phone, cell, currentPassword, newPassword, address, about, city } = req.body
+            const { name, user, password, type } = req.body
 
             const { user_id } = await UserByToken(authHeader)
 
             const user = await User.findByPk(user_id)
 
-            const superUser = await User.findByPk(user_id)
-
-            if (newPassword) {
-                if (!(await user.checkPassword(currentPassword))) {
-                    return res.status(401).json({ error: 'Incorrect Password' })
-                }
-
-                const updateUser = await user.update({
-                    name,
-                    email,
-                    phone,
-                    cell,
-                    address,
-                    city,
-                    about,
-                    password: newPassword,
-                })
-
-                return res.json(updateUser)
-            }
+            if (!user.type == `admin`) return res.status(401).json({ error: 'Credenciais insuficiente' })
 
             const updateUser = await user.update({
                 name,
-                email,
-                phone,
-                cell,
-                address,
-                city,
-                about,
+                user,
+                password,
+                type,
             })
 
             return res.json(updateUser)

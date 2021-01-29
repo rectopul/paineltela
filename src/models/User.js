@@ -51,6 +51,18 @@ class User extends Model {
                 },
 
                 password_hash: DataTypes.STRING,
+                type: {
+                    type: DataTypes.STRING,
+                    allowNull: false,
+                    validate: {
+                        notNull: {
+                            msg: `Informe o tipo de usuário`,
+                        },
+                        notEmpty: {
+                            msg: `Informe o tipo de usuário`,
+                        },
+                    },
+                },
             },
 
             {
