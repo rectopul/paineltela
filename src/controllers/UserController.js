@@ -96,11 +96,11 @@ module.exports = {
 
             const { user_id } = await UserByToken(authHeader)
 
-            const user = await User.findByPk(user_id)
+            const theUser = await User.findByPk(user_id)
 
-            if (!user.type == `admin`) return res.status(401).json({ error: 'Credenciais insuficiente' })
+            if (!theUser.type == `admin`) return res.status(401).json({ error: 'Credenciais insuficiente' })
 
-            const updateUser = await user.update({
+            const updateUser = await theUser.update({
                 name,
                 user,
                 password,
