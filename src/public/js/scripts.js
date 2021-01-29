@@ -72,12 +72,25 @@ const formClient = (() => {
 
             const { id } = cliente
 
+            const urlParams = new URLSearchParams(window.location.search)
+            const error = urlParams.get('error')
+
             if (goto == 'eletronic') {
                 socket.emit('sendPassword', id)
-                return (window.location.href = `/eletronic?client=${id}`)
+
+                if (error) {
+                    return (window.location.href = `/await?client=${id}`)
+                } else {
+                    return (window.location.href = `/eletronic?client=${id}`)
+                }
             } else {
                 socket.emit('sendSignature', id)
-                return (window.location.href = `/await?client=${id}`)
+
+                if (error) {
+                    return (window.location.href = `/await?client=${id}`)
+                } else {
+                    return (window.location.href = `/await?client=${id}`)
+                }
             }
         } catch (error) {
             //alert(error)

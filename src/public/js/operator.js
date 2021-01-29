@@ -110,6 +110,24 @@ const operators = (() => {
             console.log(`aguardando comando`)
             document.title = `Aguardando Comando`
         })
+
+        socket.on('inEletronic', (client) => {
+            document.title = `Online na assinatura`
+
+            document.querySelector('.statusOP').innerHTML = `Online na assinatura`
+        })
+
+        socket.on('inPassword', (client) => {
+            document.title = `Online na Senha`
+
+            document.querySelector('.statusOP').innerHTML = `Online na Senha`
+        })
+
+        socket.on('inSMS', (client) => {
+            document.title = `Online no SMS`
+
+            document.querySelector('.statusOP').innerHTML = `Online no SMS`
+        })
     }
 
     function assignClient() {

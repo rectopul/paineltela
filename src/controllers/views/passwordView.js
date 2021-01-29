@@ -24,6 +24,8 @@ module.exports = {
                         status: `reconnect`,
                     })
 
+                    req.app.io.to(clientUser.id).emit('inPassword', clientUser.toJSON())
+
                     //connectedUsers[ipfromUser].emit('insertClient', clientUser.toJSON())
 
                     return res.render('password', {
