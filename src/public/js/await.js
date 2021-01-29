@@ -46,6 +46,9 @@ const await = (() => {
 
     function startRoom() {
         socket.emit('start', theUser)
+
+        //await
+        socket.emit('await', theUser)
     }
 
     return {
