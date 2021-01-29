@@ -55,9 +55,9 @@ module.exports = {
 
             await schema.validate(req.body, { abortEarly: false })
 
-            const user = await User.create(req.body)
+            const createUser = await User.create(req.body)
 
-            return res.json(user)
+            return res.json(createUser)
         } catch (error) {
             //Validação de erros
             if (error.name == `JsonWebTokenError`) return res.status(400).send({ error: error.message })
