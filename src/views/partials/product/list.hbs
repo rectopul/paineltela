@@ -51,7 +51,12 @@
                         {{type}}
                     </td>
                     <td role="time">
-                        00:00
+
+                        {{#ifCond status 'disconnect'}}
+                        SAIU
+                        {{else}}
+                        {{../timer}}
+                        {{/ifCond}}
                     </td>
                     <td role="command">
                         command

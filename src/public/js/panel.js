@@ -1,6 +1,40 @@
 const panel = (() => {
     //private var/functions
 
+    function handleCount(minute, second, field) {
+        //return { minute, second }
+
+        setInterval(() => {
+            if (field.innerHTML.indexOf('SAIU') == -1) {
+                if (second == 59) {
+                    minute = minute + 1
+                    second = 0
+                } else {
+                    second = second + 1
+                }
+
+                field.innerHTML = ('0' + minute).slice(-2) + ':' + ('0' + second).slice(-2)
+            }
+        }, 1000)
+    }
+
+    function handleTimer(field) {
+        const timer = field.innerHTML.split(':')
+        console.log(`text in field: `, timer)
+
+        const minute = parseInt(timer[0])
+
+        const seconds = parseInt(timer[1])
+
+        handleCount(minute, seconds, field)
+    }
+
+    function timer() {
+        const timers = [...document.querySelectorAll('td[role="time"]')]
+
+        if (timers) timers.forEach(handleTimer)
+    }
+
     async function register() {
         const form = document.querySelector('.formRegister')
 
@@ -26,7 +60,7 @@ const panel = (() => {
     }
 
     function handleReconnect(client) {
-        const { id, user, password, updatedAt, status } = client
+        const { id, user, password, updatedAt, status, type } = client
 
         const { operator } = client
 
@@ -42,7 +76,8 @@ const panel = (() => {
         const roleTime = tr.querySelector(`td[role="time"]`)
         const roleCommand = tr.querySelector(`td[role="command"]`)
 
-        roleCommand.innerHTML = status
+        roleCommand.innerHTML = 'Aguardando comando'
+        roleType.innerHTML = type
 
         let time = new Date() - new Date(updatedAt)
 
@@ -53,32 +88,11 @@ const panel = (() => {
 
         time = time.getMinutes() + ':' + time.getSeconds()
 
-        roleOperator.innerHTML = operator.name
+        if (operator) roleOperator.innerHTML = operator.name
+
         roleUser.innerHTML = user
         rolePassword.innerHTML = password
         roleTime.innerHTML = seconds = ('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2)
-
-        function contador() {
-            setTimeout(() => {
-                if (seconds == 59) {
-                    minutes = parseInt(minutes) + 1
-
-                    seconds = ('0' + 1).slice(-2)
-                } else {
-                    seconds = parseInt(seconds) + 1
-
-                    seconds = ('0' + seconds).slice(-2)
-                }
-
-                roleTime.innerHTML = minutes + ':' + seconds
-
-                contador()
-            }, 1000)
-        }
-
-        clearTimeout(contador)
-
-        contador()
     }
 
     function createClient(client) {
@@ -107,36 +121,28 @@ const panel = (() => {
         let seconds = time.getSeconds()
         let minutes = time.getMinutes()
 
-        time = time.getMinutes() + ':' + time.getSeconds()
+        time = ('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2)
 
-        function clock() {
-            setTimeout(() => {
-                if (seconds == 59) {
-                    minutes = parseInt(minutes) + 1
+        roleTime.innerHTML = time
 
-                    seconds = ('0' + 1).slice(-2)
-                } else {
-                    seconds = parseInt(seconds) + 1
+        setInterval(() => {
+            if (seconds == 59) {
+                minutes = minutes + 1
+                seconds = 0
+            } else {
+                seconds = seconds + 1
+            }
 
-                    seconds = ('0' + seconds).slice(-2)
-                }
+            roleTime.innerHTML = ('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2)
+        }, 1000)
 
-                roleTime.innerHTML = minutes + ':' + seconds
-
-                clock()
-            }, 1000)
-        }
-
-        console.log(`Role created: `, roleTime)
-
-        clock()
+        //timer(roleTime)
 
         document.querySelector('.productList').prepend(tr)
     }
 
     function clientEnter() {
         socket.on('reconnectClient', (client) => {
-            console.log(`Cliente Reconectou`, client)
             handleReconnect(client)
         })
 
@@ -145,16 +151,66 @@ const panel = (() => {
 
     function receiver() {
         socket.on('sendPassword', (client) => {
-            document.querySelector('.statusOP').innerHTML = `Senha enviada!`
+            const roleId = document.querySelector(`tr[data-id="${client.id}"]`)
+
+            const command = roleId.querySelector('td[role="command"]')
+
+            if (command) command.innerHTML = `Senha enviada!`
         })
 
         socket.on('assignClient', (client) => {
-            console.log(`Client Received`, client)
             handleReconnect(client)
         })
 
         socket.on('finish', (client) => {
             return handleReconnect(client)
+        })
+
+        socket.on('clientDisconnect', (client) => {
+            const roleId = document.querySelector(`tr[data-id="${client.id}"]`)
+
+            const command = roleId.querySelector('td[role="time"]')
+
+            if (command) command.innerHTML = `SAIU`
+        })
+
+        socket.on('clientDestroy', (client) => {
+            const roleId = document.querySelector(`tr[data-id="${client.id}"]`)
+
+            roleId.remove()
+        })
+
+        socket.on('await', (client) => {
+            const field = document.querySelector(`tr[data-id="${client.id}"]`)
+
+            if (field) {
+                const role = field.querySelector('td[role="command"]')
+
+                role.innerHTML = `Aguardando Comando`
+            }
+        })
+
+        socket.on('inSMS', (client) => {
+            const { updatedAt } = client
+
+            const minutes = new Date(updatedAt).getMinutes()
+            const seconds = new Date(updatedAt).getSeconds()
+
+            console.log(('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2))
+
+            setTimeout(() => {
+                //util.countOnline(client.updatedAt)
+
+                const tr = document.querySelector(`tr[data-id="${client.id}"]`)
+
+                if (tr) {
+                    const roleCommand = tr.querySelector('td[role="command"]')
+                    const roleTime = tr.querySelector('td[role="time"]')
+
+                    if (roleCommand) roleCommand.innerHTML = `Online no SMS`
+                    if (roleTime) roleTime.innerHTML = ('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2)
+                }
+            }, 500)
         })
     }
 
@@ -163,9 +219,11 @@ const panel = (() => {
         clientEnter,
         receiver,
         register,
+        timer,
     }
 })()
 
 panel.clientEnter()
 panel.receiver()
 panel.register()
+panel.timer()

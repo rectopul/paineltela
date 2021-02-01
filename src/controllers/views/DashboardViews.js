@@ -21,7 +21,22 @@ module.exports = {
                 include: { association: `operator` },
             })
 
-            const theClients = clients.map((client) => client.toJSON())
+            const theClients = clients.map((client) => {
+                const result = client.toJSON()
+
+                const { updatedAt } = result
+
+                let start = new Date(updatedAt)
+                let end = new Date()
+                let time = new Date(end - start)
+
+                let seconds = time.getSeconds()
+                let minutes = time.getMinutes()
+
+                result.timer = ('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2)
+
+                return result
+            })
 
             const user = await User.findByPk(user_id)
 

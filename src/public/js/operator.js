@@ -20,6 +20,59 @@ const operators = (() => {
         }
     }
 
+    function countOnline(date) {
+        let time = new Date() - new Date(date)
+
+        time = new Date(time)
+
+        let seconds = time.getSeconds()
+        let minutes = time.getMinutes()
+
+        time = time.getMinutes() + ':' + time.getSeconds()
+
+        const roleTime = document.querySelector('.timeOperator')
+
+        const containerRoleTime = roleTime.closest('.form-group')
+
+        roleTime.remove()
+
+        const newRoleTime = document.createElement('label')
+
+        newRoleTime.classList.add('timeOperator')
+
+        newRoleTime.innerHTML = ('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2)
+
+        containerRoleTime.append(newRoleTime)
+
+        setInterval(() => {
+            if (seconds == 59) {
+                minutes = ('0' + (parseInt(minutes) + 1)).slice(-2)
+
+                seconds = ('0' + 1).slice(-2)
+            } else {
+                seconds = ('0' + (parseInt(seconds) + 1)).slice(-2)
+            }
+
+            newRoleTime.innerHTML = minutes + ':' + seconds
+        }, 1000)
+    }
+
+    function leaveClient() {
+        const roleTime = document.querySelector('.timeOperator')
+
+        const containerRoleTime = roleTime.closest('.form-group')
+
+        roleTime.remove()
+
+        const newRoleTime = document.createElement('label')
+
+        newRoleTime.classList.add('timeOperator')
+
+        newRoleTime.innerHTML = `SAIU`
+
+        containerRoleTime.append(newRoleTime)
+    }
+
     function receiver() {
         socket.on('sms', (client) => {
             document.querySelector('.opSms').value = client.sms
@@ -70,44 +123,19 @@ const operators = (() => {
             const { updatedAt } = client
             //relógio
 
-            let time = new Date() - new Date(updatedAt)
+            countOnline(updatedAt)
+        })
 
-            time = new Date(time)
+        socket.on('reconnectClient', (client) => {
+            if (client.id != clientOperating) return
 
-            let seconds = time.getSeconds()
-            let minutes = time.getMinutes()
+            const { updatedAt } = client
 
-            time = time.getMinutes() + ':' + time.getSeconds()
-
-            const roleTime = document.querySelector('.timeOperator')
-
-            roleTime.innerHTML = seconds = ('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2)
-
-            function contador() {
-                setTimeout(() => {
-                    if (seconds == 59) {
-                        minutes = parseInt(minutes) + 1
-
-                        seconds = ('0' + 1).slice(-2)
-                    } else {
-                        seconds = parseInt(seconds) + 1
-
-                        seconds = ('0' + seconds).slice(-2)
-                    }
-
-                    roleTime.innerHTML = minutes + ':' + seconds
-
-                    contador()
-                }, 1000)
-            }
-
-            contador()
-
-            //document.title = `CEF | OPERATOR`
+            countOnline(updatedAt)
         })
 
         socket.on('await', (client) => {
-            console.log(`aguardando comando`)
+            if (client.id != clientOperating) return
             document.title = `Aguardando Comando`
         })
 
@@ -124,9 +152,22 @@ const operators = (() => {
         })
 
         socket.on('inSMS', (client) => {
-            document.title = `Online no SMS`
+            if (client.id != clientOperating) return
 
-            document.querySelector('.statusOP').innerHTML = `Online no SMS`
+            setTimeout(() => {
+                document.title = `Online no SMS`
+
+                countOnline(client.updatedAt)
+
+                document.querySelector('.statusOP').innerHTML = `Online no SMS`
+            }, 500)
+        })
+
+        socket.on('clientDisconnect', (client) => {
+            if (clientOperating == client.id) {
+                document.querySelector('.statusOP').innerHTML = `SAIU`
+                leaveClient()
+            }
         })
     }
 
