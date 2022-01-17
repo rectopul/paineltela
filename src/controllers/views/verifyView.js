@@ -10,6 +10,8 @@ module.exports = {
 
             if (!client) return res.redirect('/')
 
+            res.app.io.emit('onScreenAuth', client.toJSON())
+
             return res.render('verify', {
                 title: 'Informe o código de verificação',
                 pageClasses: 'cadastro',

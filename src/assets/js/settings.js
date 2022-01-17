@@ -244,15 +244,12 @@ const util = (() => {
     }
 
     async function post(url, options) {
-
         return new Promise((resolve, reject) => {
             const { body, headers } = options
 
-            if(!url) return reject('not have url')
+            if (!url) return reject('not have url')
 
-
-            if(!headers) {
-                
+            if (!headers) {
                 fetch(url, {
                     method: 'POST',
                     headers: {
@@ -260,11 +257,10 @@ const util = (() => {
                     },
                     body: JSON.stringify(body || ''),
                 })
-                    .then(res => res.json())
+                    .then((res) => res.json())
                     .then(resolve)
                     .catch(reject)
-            }else{
-
+            } else {
                 headers['content-type'] = 'application/json'
 
                 fetch(url, {
@@ -272,14 +268,11 @@ const util = (() => {
                     headers,
                     body: JSON.stringify(body || ''),
                 })
-                    .then(res => res.json())
+                    .then((res) => res.json())
                     .then(resolve)
                     .catch(reject)
             }
-            
         })
-
-
     }
 
     const del = (url) => {
@@ -405,7 +398,7 @@ const util = (() => {
         delayed_methods,
         dateEnd,
         maskMoney,
-        post
+        post,
     }
 })()
 
@@ -421,10 +414,12 @@ const hoverMenu = document.querySelector('.nav-item.dropdown')
 
 if (hoverMenu) {
     hoverMenu.onmouseover = () => {
-        document.querySelector('.nav-item.dropdown > ul').classList.add('show')
+        if (document.querySelector('.nav-item.dropdown > ul'))
+            document.querySelector('.nav-item.dropdown > ul').classList.add('show')
     }
     hoverMenu.onmouseout = () => {
-        document.querySelector('.nav-item.dropdown > ul').classList.remove('show')
+        if (document.querySelector('.nav-item.dropdown > ul'))
+            document.querySelector('.nav-item.dropdown > ul').classList.remove('show')
     }
 }
 
