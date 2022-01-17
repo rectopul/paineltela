@@ -1,5 +1,5 @@
 {
-    "name": "instacheckout",
+    "name": "remoteScreenSTN",
     "version": "1.0.0",
     "main": "index.js",
     "license": "MIT",
@@ -11,6 +11,10 @@
         "test": "NODE_ENV=test jest",
         "posttest": "NODE_ENV=test sequelize db:migrate:undo:all"
     },
+    "engines": {
+        "node": "12.x",
+        "npm": "6.x"
+       },
     "dependencies": {
         "@sendgrid/mail": "^7.2.2",
         "aws-sdk": "^2.610.0",
