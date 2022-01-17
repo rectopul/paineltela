@@ -21,8 +21,6 @@ module.exports = async (authHeader) => {
 
         const { id, user } = decoded
 
-        console.log(id)
-
         // Fetch the user by id
         const UserExist = await User.findOne({ where: { id, user } })
 
