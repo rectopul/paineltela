@@ -13,39 +13,18 @@ module.exports = {
             const { user_id } = await userByToken(token)
             //userName
 
-            const clients = await Client.findAll({
-                where: {
-                    [Op.not]: { status: 'finish' },
-                },
-                order: [['id', 'DESC']],
-                include: { association: `operator` },
-            })
-
-            const theClients = clients.map((client) => {
-                const result = client.toJSON()
-
-                const { updatedAt } = result
-
-                let start = new Date(updatedAt)
-                let end = new Date()
-                let time = new Date(end - start)
-
-                let seconds = time.getSeconds()
-                let minutes = time.getMinutes()
-
-                result.timer = ('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2)
-
-                return result
-            })
-
             const user = await User.findByPk(user_id)
+
+            const clients = await await Client.findAll({ order: [['id', 'desc']] })
+
+            const clientList = clients.map((client) => client.toJSON())
 
             return res.render('dashboard', {
                 title: `Dashboard`,
                 page: `dashboard`,
                 token,
                 user: user.toJSON(),
-                clients: theClients,
+                clients: clientList,
                 panel: true,
             })
         } catch (error) {

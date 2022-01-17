@@ -7,6 +7,8 @@ const login = (() => {
 
             const user = util.serialize(form)
 
+            console.log(user)
+
             return util
                 .request({
                     url: `/api/login`,

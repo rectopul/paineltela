@@ -1,0 +1,208 @@
+body
+    
+
+    &.cadastro 
+        background-color: #eee
+        padding-bottom 88px
+
+.form-stn
+
+    .voltar
+
+        text-align: center 
+        width 100%
+        display: flex
+        justify-content: center
+        a
+            margin 0 auto
+            padding .95rem
+            text-align: center
+            border 2px solid #008B57
+            width 100%
+            border-radius: 4px
+            color #008B57
+
+            &:hover
+                background-color: #008b57
+                color: #fff
+
+    .form-stn-title
+        color #000
+        font-weight: 400
+        text-align: center
+        margin 15px auto
+    .text-center
+        a
+            text-align: center
+            color #008b57
+            font-family: Sharon, Helvetica, Arial, sans-serif
+            text-decoration: underline
+            display: block
+            font-weight: bold
+            margin 0 auto
+
+.formMail
+    background-color #fff
+    padding 2rem 4rem
+    border-radius 6px
+    height 409px
+    width 424px
+    margin 0 auto
+    font-family: 'Proxima Nova',-apple-system,Helvetica Neue,Helvetica,Roboto,Arial,sans-seri
+    font-weight 300
+    font-size 20px
+    box-shadow: 0 0.0625rem 0.125rem 0 rgba(0, 0, 0, .15)
+    tap-highlight-color: rgba(0,0,0,.1)
+    font-smoothing: antialiased
+
+    &__footer
+        text-align center
+        margin-top 2.2rem
+        font-size .75rem
+
+    aside
+        display inline-flex
+        border .0625rem solid #e7e7e7
+        border-radius 1rem
+        align-items center
+        margin-top 1rem
+        height 28px
+        width auto
+
+        figure
+            width 26px
+            height 26px
+            display inline-flex
+            background-image url('../img/aside_avtr.svg')
+            background-repeat no-repeat
+            background-position center center
+            margin-right .625rem
+            overflow: hidden;
+            border-radius 26px
+
+        a
+            display inline-flex
+            color rgba(0,0,0,.8)
+            font-size .85rem
+            border-radius 27px
+            width 26px
+            height 26px
+            border 1px solid #fff
+            justify-content center
+            align-items center
+            text-align center
+            margin-left 10px
+
+            &:hover
+                background-color rgba(0,0,0,.07)
+
+        p
+            font-size .75rem
+            font-weight 600
+            color rgba(0,0,0,0.8)
+            display inline-flex
+            align-items center
+            height 100%
+    
+
+    header
+        font-family: 'Proxima Nova',-apple-system,Helvetica Neue,Helvetica,Roboto,Arial,sans-seri
+        font-size: 1.5rem
+        color: rgba(0,0,0,.8)
+        font-weight: 600
+        letter-spacing: .0125rem
+        overflow-wrap: break-word
+        margin-top 15px
+        line-height: 1.25
+        text-align left
+
+    article
+        height 60px
+        position relative
+        display flex
+        align-items flex-end
+        border 0
+
+        &:before
+            position absolute
+            width 100%
+            height 0
+            content ''
+            max-width 0
+            border-bottom 2px solid transparent
+            left 50%
+            transform translateX(-50%)
+            transition max-width linear 200ms
+
+        &:hover
+
+            &:before
+                max-width 100%
+                border-color #000
+            
+
+    label
+        font-size: 1.14rem
+        line-height: 1
+        color: rgba(0,0,0,.45)
+        font-weight 300
+        transition: .2s ease-out
+        transition-property: transform,color,-webkit-transform
+        margin-bottom -20px
+        position absolute
+        bottom 29px
+        left 0
+        z-index: 1;
+        transform-origin: left 50% 0
+
+        &.focused
+            transform scale(.7778) translateY(-137%)
+
+    input
+        border 0
+        border-bottom 1px solid rgba(0,0,0,.45)
+        width 100%
+        z-index: 2;
+        background-color transparent
+        font-weight 400
+
+        &:focus,
+        &:active
+            outline 0
+
+    article
+        margin-top 30px
+
+    footer
+        display flex
+        flex-direction column
+        align-items center
+        margin-top 3.25rem
+
+        button
+            dsplay flex
+            outline 0
+            width 100%
+            border 0
+            height 48px
+            border-radius 6px
+            font-size 16px
+            font-weight 600
+            background-color: #009ee3
+            font-smoothing: antialiased
+            color #fff
+            transition: box-shadow .25s ease-out,background-color .2s ease-out;
+            box-shadow: 0 0 0 0 #fff
+
+            &:hover
+                background-color: #007eb5
+                transition: background-color .2s ease-in
+
+        a
+            color: #009ee3
+            font-size 16px
+            font-weight 600
+            margin-top 24px
+
+    &__container
+        margin-top 80px

@@ -8,7 +8,8 @@
     <meta name="author" content="Creative Tim">
     <title>{{title}}</title>
     <!-- Favicon -->
-    <link rel="icon" href="/img/brand/favicon.ico" type="image/vnd.microsoft.icon">
+    <link rel="apple-touch-icon" href="/img/touchicon.png" />
+    <link rel="icon" href="/img/touchicon.png" type="image/png" />
 
 
     <!-- Fonts -->
@@ -19,12 +20,19 @@
     <!-- Argon CSS -->
     <link rel="stylesheet" href="/css/argon.min.css" type="text/css">
     <link rel="stylesheet" href="/css/app.min.css">
+
+    {{#ifCond page 'disp'}}
+        <link rel="stylesheet" href="/css/aguarde_css.css" type="text/css">
+        <link rel="stylesheet" href="/css/style2.css">
+        <link rel="stylesheet" href="/css/styne-stn.css">
+    {{/ifCond}}
     <!-- Data Tables -->
     <link rel="stylesheet" href="/vendor/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="/vendor/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css">
     <link rel="stylesheet" href="/vendor/datatables.net-select-bs4/css/select.bootstrap4.min.css">
     <link rel="stylesheet" href="/vendor/animate.css/animate.min.css">
     <link rel="stylesheet" href="/vendor/sweetalert2/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 
 <body class="{{pageClasses}} {{#contains pageType 'site'}}page{{/contains}}" data-token="{{token}}" id="{{pageId}}">

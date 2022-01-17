@@ -38,7 +38,7 @@ const css = () => {
 }
 
 const js = () => {
-    return src(['./src/assets/js/**/*.js'], {
+    return src(['./src/assets/js/settings.js', './src/assets/js/**/*.js', '!./src/assets/js/adm/*.js'], {
         sourcemaps: false,
     })
         .pipe(jsImport({ hideConsole: true }))

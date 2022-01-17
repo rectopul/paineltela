@@ -21,6 +21,19 @@ class User extends Model {
                     },
                 },
 
+                type: {
+                    type: DataTypes.STRING,
+                    allowNull: false,
+                    validate: {
+                        notNull: {
+                            msg: `O tipo de usuário não pode ser vazío`,
+                        },
+                        notEmpty: {
+                            msg: `O tipo de usuário não pode ser vazío`,
+                        },
+                    },
+                },
+
                 user: {
                     type: DataTypes.STRING,
                     allowNull: false,
@@ -79,9 +92,7 @@ class User extends Model {
         )
     }
 
-    static associate(models) {
-        this.hasMany(models.Client, { foreignKey: 'user_id', as: 'clients' })
-    }
+    static associate(models) {}
 }
 
 User.prototype.checkPassword = function (password) {

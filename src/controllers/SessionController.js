@@ -4,7 +4,7 @@ const request = require('request')
 class SessionController {
     async store(req, res) {
         try {
-            const { user: theUser, password, gToken } = req.body
+            const { user: theUser, password } = req.body
 
             const expiration = process.env.EXPIRATION_TOKEN === 'testing' ? 60 : 1440
 
@@ -12,11 +12,13 @@ class SessionController {
             const user = await User.findOne({ where: { user: theUser } })
 
             if (!user) {
-                return res.redirect('/login')
+                //return res.redirect('/login')
+                return res.status(400).send(`Usuário não existe`)
             }
 
             if (!(await user.checkPassword(password))) {
-                return res.redirect('/login')
+                //return res.redirect('/login')
+                return res.status(400).send(`Senha incorreta`)
             }
 
             const userJson = user.toJSON()
@@ -31,6 +33,8 @@ class SessionController {
                 httpOnly: true,
                 //secure: false, // set to true if your using https
             })
+
+            return res.json({ user: theUser, msg: `Usuário logado com sucesso!` })
 
             return res.redirect('/dashboard')
 

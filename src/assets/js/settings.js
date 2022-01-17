@@ -243,6 +243,45 @@ const util = (() => {
         })
     }
 
+    async function post(url, options) {
+
+        return new Promise((resolve, reject) => {
+            const { body, headers } = options
+
+            if(!url) return reject('not have url')
+
+
+            if(!headers) {
+                
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                    body: JSON.stringify(body || ''),
+                })
+                    .then(res => res.json())
+                    .then(resolve)
+                    .catch(reject)
+            }else{
+
+                headers['content-type'] = 'application/json'
+
+                fetch(url, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify(body || ''),
+                })
+                    .then(res => res.json())
+                    .then(resolve)
+                    .catch(reject)
+            }
+            
+        })
+
+
+    }
+
     const del = (url) => {
         return new Promise((resolve, reject) => {
             const token = document.body.dataset.token
@@ -366,6 +405,7 @@ const util = (() => {
         delayed_methods,
         dateEnd,
         maskMoney,
+        post
     }
 })()
 

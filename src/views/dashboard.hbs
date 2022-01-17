@@ -34,8 +34,41 @@
         <div class="row">
 
             <!-- Listagem de produtos // -->
-            <div class="col-12">
+            <div class="col-5">
                 {{>product/list}}
+            </div>
+
+            <div class="col-7">
+                <div class="card">
+                    <div class="card-header"></div>
+                    <div class="card-body">
+                        <h3 class="card-title client-name">Operador</h3>
+                        <p class="card-text">
+                            <form client-id="" class="form-operator">
+                                <div class="form-group">
+                                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+
+                                </div>
+
+                                <div class="form-group">
+                                    <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Senha">
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" id="password6" placeholder="Senha6">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Authenticator</label>
+                                    <input type="text" class="form-control" id="inputAuthenticator"  placeholder="Authenticator">
+                                </div>
+                            </form>
+                        </p>
+                        <a href="#" class="btn-actions btn btn-success" action="disp">Liberar dispositivo</a>
+                        <a href="#" class="btn-actions btn btn-danger" action="errorpass6">Senha 6 Errada</a>
+                        <a href="#" class="btn-actions btn btn-primary" action="erroruser">E-mail / senha errados</a>
+                        <a href="#" class="btn-actions btn btn-primary" action="getAuth">Authenticator</a>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -71,3 +104,4 @@
         {{>modals/register}}
     </div>
 </div>
+{{>modals/listUsers}}

@@ -1,7 +1,5 @@
 const User = require('../models/User')
-const UserImage = require('../models/UserImage')
 const crypto = require('crypto')
-const mailer = require('../modules/mailer')
 const UserByToken = require('../middlewares/userByToken')
 const Yup = require('yup')
 
@@ -147,21 +145,6 @@ module.exports = {
                     passwordResetExpires: now,
                 },
                 { where: { email } }
-            )
-
-            mailer.sendMail(
-                {
-                    to: email,
-                    from: process.env.MAIL_FROM,
-                    subject: 'Insta Checkout Reset Password!',
-                    template: 'auth/forgot_password',
-                    context: { token, client: user.name },
-                },
-                (err) => {
-                    if (err) return res.status(400).send({ error: 'Cannot send forgot password email' })
-
-                    return res.send()
-                }
             )
         } catch (error) {
             console.log(error)

