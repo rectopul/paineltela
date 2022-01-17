@@ -256,9 +256,8 @@ const panel = (() => {
             if (!role) return
             role.className = ''
 
-            role.classList.add('blockstatus', 'enter')
-
             setTimeout(() => {
+                role.classList.add('blockstatus', 'enter')
                 role.querySelector('span').innerHTML = `Online Autenticador`
             }, 300)
         })
