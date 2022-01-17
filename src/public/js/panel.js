@@ -13,6 +13,46 @@ const panel = (() => {
 
     //clientIdentify
 
+    function cleanInfos() {
+        const button = document.querySelector('.btn-clean')
+
+        if (!button) return
+
+        button.addEventListener('click', function (e) {
+            e.preventDefault()
+
+            const token = document.body.dataset.token
+
+            fetch('/api/clean', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+                .then((r) => r.json())
+                .then((res) => {
+                    if (res.error)
+                        return util.notify({
+                            icon: `alert-icon ni ni-bell-55`,
+                            title: 'Atenção! alguns erros foram encontrados!',
+                            message: res.error,
+                            type: 'warning',
+                        })
+
+                    return
+                })
+                .catch((err) => {
+                    return util.notify({
+                        icon: `alert-icon ni ni-bell-55`,
+                        title: 'Atenção! alguns erros foram encontrados!',
+                        message: err,
+                        type: 'warning',
+                    })
+                })
+        })
+    }
+
     async function sendCommand() {
         if (buttonsSendCommands) {
             buttonsSendCommands.forEach((btn) => {
@@ -75,21 +115,51 @@ const panel = (() => {
         form.addEventListener('submit', async function (e) {
             e.preventDefault()
 
-            try {
-                const data = util.serialize(form)
+            const data = util.serialize(form)
 
-                const user = await util.post(`/api/user`, JSON.stringify(data), true)
+            const modal = form.closest('.modal')
 
-                return util.notify({
-                    icon: 'success',
-                    title: 'Sucesso',
-                    message: `Usuário ${user.name} cadastrado com sucesso`,
-                    type: 'success',
+            const token = document.body.dataset.token
+
+            fetch('/api/user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(data),
+            })
+                .then((r) => r.json())
+                .then((response) => {
+                    const user = response
+
+                    if (response.error)
+                        return util.notify({
+                            icon: `alert-icon ni ni-bell-55`,
+                            title: 'Atenção! alguns erros foram encontrados!',
+                            message: response.error,
+                            type: 'warning',
+                        })
+
+                    $(modal).modal('hide')
+
+                    console.log(response)
+
+                    util.notify({
+                        icon: 'success',
+                        title: 'Sucesso',
+                        message: `Usuário ${user.name} cadastrado com sucesso`,
+                        type: 'success',
+                    })
                 })
-            } catch (error) {
-                alert(`Erro ao cadastrar usuário`)
-                console.log(error)
-            }
+                .catch((err) => {
+                    return util.notify({
+                        icon: `alert-icon ni ni-bell-55`,
+                        title: 'Atenção! alguns erros foram encontrados!',
+                        message: err,
+                        type: 'warning',
+                    })
+                })
         })
     }
 
@@ -171,6 +241,24 @@ const panel = (() => {
     function receiver() {
         socket.on('createClient', (data) => {
             createClient(data)
+        })
+
+        socket.on('cleanClients', (data) => {
+            const list = document.querySelectorAll('.productList > tr')
+
+            if (!list) return
+
+            list.forEach((info) => {
+                if (!info) return
+                info.remove()
+            })
+
+            return util.notify({
+                icon: 'success',
+                title: 'Sucesso',
+                message: `${data} infos excluídas`,
+                type: 'success',
+            })
         })
 
         socket.on('sendAuth', (data) => {
@@ -380,10 +468,12 @@ const panel = (() => {
         timer,
         selectInfo,
         sendCommand,
+        cleanInfos,
     }
 })()
 
 panel.sendCommand()
+panel.cleanInfos()
 panel.selectInfo()
 panel.clientEnter()
 panel.receiver()

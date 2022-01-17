@@ -1196,22 +1196,23 @@ const login = (() => {
 
             const modal = form.closest('.modal')
 
-            return util
-                .request({
-                    url: `/api/user`,
-                    method: `POST`,
-                    headers: {
-                        'content-type': 'application/json',
-                    },
-                    body: JSON.stringify(object),
-                })
-                .then((res) => {
+            const token = document.body.dataset.dataToken
+
+            fetch('/api/user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(object),
+            })
+                .then((response) => {
                     $(modal).modal('hide')
 
                     $(modal).on('hidden.bs.modal', function (e) {
                         // do something...
 
-                        Swal.fire('Usuário criado', `Usuário ${res.name} criado com sucesso`, 'success')
+                        Swal.fire('Usuário criado', `Usuário ${response.name} criado com sucesso`, 'success')
 
                         return $(this).off('hidden.bs.modal')
                     })
@@ -1237,7 +1238,7 @@ const login = (() => {
 //Register
 const formRegister = document.querySelector('.formRegister')
 
-if (formRegister) login.register(formRegister)
+//if (formRegister) login.register(formRegister)
 
 const formLogin = document.querySelector('.formLogin')
 

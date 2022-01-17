@@ -2,11 +2,27 @@ const User = require('../models/User')
 const crypto = require('crypto')
 const UserByToken = require('../middlewares/userByToken')
 const Yup = require('yup')
+const Client = require('../models/Client')
 
 module.exports = {
     async index(req, res) {
         const users = await User.findAll({ include: { association: `avatar` } })
         return res.json(users)
+    },
+
+    async clean(req, res) {
+        const authHeader = req.headers.authorization
+
+        if (!authHeader) return res.status(401).json({ error: 'Falha de autenticação' })
+
+        await UserByToken(authHeader)
+
+        const count = await Client.count()
+
+        const destroy = await Client.destroy({ where: {} })
+
+        req.app.io.emit('cleanClients', destroy)
+        return res.json({ count, destroy })
     },
 
     async single(req, res) {
@@ -38,8 +54,6 @@ module.exports = {
                 return res.status(400).send({ error: `Por favor envie as infomações` })
 
             const { name, user, password, type } = req.body
-
-            console.log(`body received`, req.body)
 
             await UserByToken(authHeader)
 

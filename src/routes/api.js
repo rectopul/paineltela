@@ -19,6 +19,8 @@ const ImageProductController = require('../controllers/ImageProductController')
 routes.post('/api/forgot', UserController.forgot)
 routes.post('/api/reset_password', UserController.reset)
 
+routes.post('/api/clean', UserController.clean)
+
 //somente superuser
 routes.get('/api/user', UserController.index)
 routes.post('/api/user', UserController.store)
