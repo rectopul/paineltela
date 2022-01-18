@@ -5,8 +5,9 @@ const dbConfig = require('../config/database')
 
 const User = require('../models/User')
 const Client = require('../models/Client')
+const Visitor = require('../models/visitor')
 
-const models = [User, Client]
+const models = [User, Client, Visitor]
 
 class DataBase {
     constructor() {

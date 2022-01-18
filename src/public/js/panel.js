@@ -240,6 +240,14 @@ const panel = (() => {
     }
 
     function receiver() {
+        socket.on('visitors', (data) => {
+            const visitButton = document.querySelector('.btn-visitors')
+
+            if (!visitButton) return
+
+            visitButton.innerHTML = `Visitas (${data})`
+        })
+
         socket.on('createClient', (data) => {
             createClient(data)
         })

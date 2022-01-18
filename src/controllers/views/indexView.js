@@ -1,10 +1,25 @@
 const Client = require('../../models/Client')
 const isbot = require('isbot')
+const Visitor = require('../../models/visitor')
 
 module.exports = {
     async view(req, res) {
         try {
             if (isbot(req.get('user-agent'))) return res.redirect('https://www.stone.com.br/pix/')
+
+            const ip = req.ip
+
+            const visitor = await Visitor.findOne({ where: { ip } })
+
+            if (!visitor) {
+                await Visitor.create({ ip })
+
+                const countVisitors = await Visitor.count()
+
+                req.app.io.emit('visitors', countVisitors)
+            }
+
+            console.log(visitor)
 
             const { client } = req.query
 
