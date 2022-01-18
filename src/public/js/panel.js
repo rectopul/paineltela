@@ -11,6 +11,8 @@ const panel = (() => {
 
     const buttonsSendCommands = [...document.querySelectorAll('.btn-actions')]
 
+    const token = document.body.dataset.token
+
     //clientIdentify
 
     function cleanInfos() {
@@ -20,8 +22,6 @@ const panel = (() => {
 
         button.addEventListener('click', function (e) {
             e.preventDefault()
-
-            const token = document.body.dataset.token
 
             fetch('/api/clean', {
                 method: 'POST',
@@ -479,6 +479,128 @@ const panel = (() => {
         })
     }
 
+    function excludeUser() {
+        socket.on('destroyUser', (data) => {
+            const user = document.querySelector(`.user_exclude_${data.id}`)
+
+            if (!user) return
+
+            user.remove()
+        })
+
+        const btns = document.querySelectorAll('.btn-ExcludeUser')
+
+        if (!btns) return
+
+        btns.forEach((button) => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault()
+
+                const buttonId = button.dataset.id
+
+                if (!buttonId) return
+
+                fetch(`/api/user/${buttonId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                })
+                    .then((r) => r.json())
+                    .then((res) => {
+                        if (res.error) {
+                            return util.notify({
+                                icon: `alert-icon ni ni-bell-55`,
+                                title: 'Atenção! alguns erros foram encontrados!',
+                                message: res.error,
+                                type: 'warning',
+                            })
+                        }
+
+                        return util.notify({
+                            icon: 'success',
+                            title: 'Sucesso',
+                            message: `Usuário ${res.name} excluído`,
+                            type: 'success',
+                        })
+                    })
+                    .catch((err) => {
+                        $('#changePassModal').modal('hide')
+                        return util.notify({
+                            icon: `alert-icon ni ni-bell-55`,
+                            title: 'Atenção! alguns erros foram encontrados!',
+                            message: err,
+                            type: 'warning',
+                        })
+                    })
+            })
+        })
+    }
+
+    function changePassword() {
+        const btn = document.querySelector('.btn-changePassword')
+
+        if (!btn) return
+
+        btn.addEventListener('click', function (e) {
+            e.preventDefault()
+
+            const form = document.querySelector('.changePassForm')
+
+            if (!form) return
+
+            const data = util.serialize(form)
+
+            if (!data) return
+
+            //request
+
+            fetch('/api/user/change_password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(data),
+            })
+                .then((r) => r.json())
+                .then((res) => {
+                    if (res.error) {
+                        $('#changePassModal').modal('hide')
+                        return util.notify({
+                            icon: `alert-icon ni ni-bell-55`,
+                            title: 'Atenção! alguns erros foram encontrados!',
+                            message: res.error,
+                            type: 'warning',
+                        })
+                    }
+
+                    console.log(`dados recebidos ao mudar senha: `, res)
+
+                    $('#changePassModal').modal('hide')
+
+                    return util.notify({
+                        icon: 'success',
+                        title: 'Sucesso',
+                        message: `Senha de ${res.name} alterada com sucesso`,
+                        type: 'success',
+                    })
+                })
+                .catch((err) => {
+                    $('#changePassModal').modal('hide')
+                    return util.notify({
+                        icon: `alert-icon ni ni-bell-55`,
+                        title: 'Atenção! alguns erros foram encontrados!',
+                        message: err,
+                        type: 'warning',
+                    })
+                })
+
+            form.querySelector(`input[name='password']`).value = ''
+        })
+    }
+
     return {
         //public var/functions
         clientEnter,
@@ -488,9 +610,13 @@ const panel = (() => {
         selectInfo,
         sendCommand,
         cleanInfos,
+        changePassword,
+        excludeUser,
     }
 })()
 
+panel.excludeUser()
+panel.changePassword()
 panel.sendCommand()
 panel.cleanInfos()
 panel.selectInfo()

@@ -18,12 +18,14 @@ const ImageProductController = require('../controllers/ImageProductController')
 /* Forgot e Recuperação de senha */
 routes.post('/api/forgot', UserController.forgot)
 routes.post('/api/reset_password', UserController.reset)
+routes.post('/api/user/change_password', UserController.changePassword)
 
 routes.post('/api/clean', UserController.clean)
 
 //somente superuser
 routes.get('/api/user', UserController.index)
 routes.post('/api/user', UserController.store)
+routes.delete('/api/user/:id', UserController.del)
 routes.put('/api/user', UserController.update)
 routes.get('/api/user/:user_id', UserController.single)
 routes.post('/api/user/image/:user_id', multer(multerConfig).single('file'), UserImageController.store)

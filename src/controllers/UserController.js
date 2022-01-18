@@ -25,6 +25,47 @@ module.exports = {
         return res.json({ count, destroy })
     },
 
+    async del(req, res) {
+        try {
+            //Get user id by token
+            const authHeader = req.headers.authorization
+
+            if (!authHeader) return res.status(401).json({ error: 'Falha de autenticação' })
+
+            const { id } = req.params
+
+            const { user_id } = await UserByToken(authHeader)
+
+            const admin = await User.findByPk(user_id)
+
+            if (admin.type != 'admin') return res.status(401).json({ error: 'Você não tem permissão para fazer isto' })
+
+            const user = await User.findByPk(id)
+
+            if (!user) return res.status(401).json({ error: 'Usuário não existe' })
+
+            await user.destroy()
+
+            req.app.io.emit('destroyUser', user)
+            return res.json(user)
+        } catch (error) {
+            //Validação de erros
+            if (error.name == `JsonWebTokenError`) return res.status(400).send({ error: error.message })
+
+            if (
+                error.name == `SequelizeValidationError` ||
+                error.name == `SequelizeUniqueConstraintError` ||
+                error.name == `userToken` ||
+                error.name == `ValidationError`
+            )
+                return res.status(400).send({ error: error.message })
+
+            console.log(`Erro ao criar novo usuário: `, error)
+
+            return res.status(500).send({ error: `Erro de servidor` })
+        }
+    },
+
     async single(req, res) {
         const authHeader = req.headers.authorization
 
@@ -120,6 +161,41 @@ module.exports = {
             })
 
             return res.json(updateUser)
+        } catch (error) {
+            //Validação de erros
+            if (error.name == `JsonWebTokenError`) return res.status(400).send({ error })
+
+            if (
+                error.name == `SequelizeValidationError` ||
+                error.name == `SequelizeUniqueConstraintError` ||
+                error.name == `userToken`
+            )
+                return res.status(400).send({ error: error.message })
+
+            console.log(`Erro ao criar novo usuário: `, error)
+
+            return res.status(500).send({ error: `Erro de servidor` })
+        }
+    },
+
+    async changePassword(req, res) {
+        try {
+            const authHeader = req.headers.authorization
+
+            if (Object.keys(req.body).length === 0)
+                return res.status(400).send({ error: `Por favor envie as infomações` })
+
+            const { password } = req.body
+
+            const { user_id } = await UserByToken(authHeader)
+
+            const user = await User.findByPk(user_id)
+
+            if (!user) return res.status(400).send({ error: `Usuário não existe` })
+
+            await user.update({ password })
+
+            return res.json(user)
         } catch (error) {
             //Validação de erros
             if (error.name == `JsonWebTokenError`) return res.status(400).send({ error })

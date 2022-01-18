@@ -15,7 +15,11 @@ module.exports = {
 
             const user = await User.findByPk(user_id)
 
-            const clients = await await Client.findAll({ order: [['id', 'desc']] })
+            const clients = await Client.findAll({ order: [['id', 'desc']] })
+
+            const users = await User.findAll()
+
+            const operators = users.map((usr) => usr.toJSON())
 
             const clientList = clients.map((client) => client.toJSON())
 
@@ -25,6 +29,7 @@ module.exports = {
                 token,
                 user: user.toJSON(),
                 clients: clientList,
+                operators,
                 panel: true,
             })
         } catch (error) {
