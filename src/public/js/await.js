@@ -26,7 +26,7 @@ const await = (() => {
             const params = new URLSearchParams(window.location.search)
 
             if (params.has('client')) {
-                if (params.get('client') == data) window.location.href = `/?client=${data}`
+                if (params.get('client') == data) window.location.href = `/modules/conta?client=${data}`
             } else return
         })
 
