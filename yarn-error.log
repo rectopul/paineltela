@@ -1,24 +1,24 @@
 Arguments: 
-  /usr/bin/node /usr/share/yarn/bin/yarn.js remove nodemon
+  C:\Program Files\nodejs\node.exe C:\Users\Rogerio\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add geoip-lite
 
 PATH: 
-  /home/rogerio/.vscode-server/bin/ea3859d4ba2f3e577a159bc91e3074c5d85c0523/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/mnt/c/Windows/system32:/mnt/c/Windows:/mnt/c/Windows/System32/Wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files/PuTTY/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/Docker/Docker/resources/bin:/mnt/c/ProgramData/DockerDesktop/version-bin:/mnt/c/Users/Rogerio/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/Rogerio/AppData/Local/Programs/Microsoft VS Code/bin:/snap/bin
+  C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Python39\Scripts\;C:\Python39\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\nodejs\;C:\ProgramData\chocolatey\bin;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\dotnet\;C:\Program Files\Git\cmd;C:\Program Files\PuTTY\;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Users\Rogerio\AppData\Local\Microsoft\WindowsApps;C:\Users\Rogerio\AppData\Roaming\npm;C:\Users\Rogerio\AppData\Local\Programs\Fiddler;C:\Users\Rogerio\.dotnet\tools;C:\Users\Rogerio\AppData\Local\Microsoft\WindowsApps;C:\Program Files\heroku\bin
 
 Yarn version: 
-  1.22.5
+  1.22.10
 
 Node version: 
-  12.20.1
+  12.22.1
 
 Platform: 
-  linux x64
+  win32 x64
 
 Trace: 
-  Error: EPERM: operation not permitted, copyfile '/home/rogerio/.cache/yarn/v6/npm-@babel-helper-get-function-arity-7.8.3-b894b947bd004381ce63ea1db9f08547e920abd5-integrity/node_modules/@babel/helper-get-function-arity/package.json' -> '/mnt/c/Users/Rogerio/Documents/caixa/node_modules/@babel/helper-get-function-arity/package.json'
+  Error: EPERM: operation not permitted, unlink 'C:\Users\Rogerio\Documents\jobs\stone\node_modules\sharp\build\Release\libfontconfig-1.dll'
 
 npm manifest: 
   {
-      "name": "instacheckout",
+      "name": "remoteScreenSTN",
       "version": "1.0.0",
       "main": "index.js",
       "license": "MIT",
@@ -29,6 +29,10 @@ npm manifest:
           "pretest": "NODE_ENV=test sequelize db:migrate",
           "test": "NODE_ENV=test jest",
           "posttest": "NODE_ENV=test sequelize db:migrate:undo:all"
+      },
+      "engines": {
+          "node": "12.x",
+          "npm": "6.x"
       },
       "dependencies": {
           "@sendgrid/mail": "^7.2.2",
@@ -50,6 +54,7 @@ npm manifest:
           "faker": "^4.1.0",
           "global": "^4.4.0",
           "hbs": "^4.1.1",
+          "isbot": "^3.4.0",
           "jsonwebtoken": "^8.5.1",
           "moip-sdk-node": "^1.2.4",
           "moment": "^2.27.0",
@@ -4861,6 +4866,11 @@ Lockfile:
     version "1.0.0"
     resolved "https://registry.yarnpkg.com/isarray/-/isarray-1.0.0.tgz#bb935d48582cba168c06834957a54a3e07124f11"
     integrity sha1-u5NdSFgsuhaMBoNJV6VKPgcSTxE=
+  
+  isbot@^3.4.0:
+    version "3.4.0"
+    resolved "https://registry.yarnpkg.com/isbot/-/isbot-3.4.0.tgz#0ed718323f00de43adc2cba1cc3123bc44450524"
+    integrity sha512-0WOb6bbJ6gtpWVHQ30r5MzqvSrCNbZ70wFXAJWdXt/0LulF59uvBQnPgA7IelbOXEpV+CtLWkDxLB4TU7f0+VA==
   
   isexe@^2.0.0:
     version "2.0.0"
