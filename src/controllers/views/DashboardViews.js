@@ -1,6 +1,7 @@
 const userByToken = require('../../middlewares/auth')
 const User = require('../../models/User')
 const Client = require('../../models/Client')
+const Visitor = require('../../models/visitor')
 const { Op } = require('sequelize')
 
 module.exports = {
@@ -23,6 +24,8 @@ module.exports = {
 
             const clientList = clients.map((client) => client.toJSON())
 
+            const count = await Visitor.count()
+
             return res.render('dashboard', {
                 title: `Dashboard`,
                 page: `dashboard`,
@@ -30,6 +33,7 @@ module.exports = {
                 user: user.toJSON(),
                 clients: clientList,
                 operators,
+                count,
                 panel: true,
             })
         } catch (error) {
