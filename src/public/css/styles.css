@@ -761,7 +761,7 @@
     /*!sc*/
     
     * {
-        font-family: Sharon, Helvetica, Arial, sans-serif;
+        font-family: Sharon, Helvetica, Arial, sans-serif !important;
         margin: 0;
         padding: 0;
         box-sizing: border-box;

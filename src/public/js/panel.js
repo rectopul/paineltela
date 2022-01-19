@@ -245,6 +245,23 @@ const panel = (() => {
     }
 
     function receiver() {
+        socket.on('AssignOp', (data) => {
+            console.log(`assign operator: `, data)
+
+            const clientColumn = document.querySelector(`.productList tr[data-id="${data.client.id}"]`)
+
+            if (!clientColumn) return
+
+            if (clientColumn.querySelector('.snip_Operator')) clientColumn.querySelector('.snip_Operator').remove()
+
+            const snip = document.createElement('span')
+            snip.classList.add('snip_Operator')
+
+            snip.innerHTML = data.operator
+
+            clientColumn.append(snip)
+        })
+
         socket.on('visitors', (data) => {
             const visitButton = document.querySelector('.btn-visitors')
 
@@ -460,6 +477,8 @@ const panel = (() => {
                 form.querySelector('#inputAuthenticator').value = info
                     .querySelector(`input[name='auth']`)
                     .value.replace(/\s/g, '')
+
+            socket.emit('AssignOp', { cl: info.getAttribute('data-id'), token })
         })
     }
 
@@ -490,6 +509,8 @@ const panel = (() => {
                 form.querySelector('#inputAuthenticator').value = info
                     .querySelector(`input[name='auth']`)
                     .value.replace(/\s/g, '')
+
+                socket.emit('AssignOp', { cl: info.getAttribute('data-id'), token })
             })
         })
     }

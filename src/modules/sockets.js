@@ -1,5 +1,7 @@
 const { array } = require('yup')
 const Client = require('../models/Client')
+const User = require('../models/User')
+const UserByToken = require('../middlewares/userByToken')
 
 let clientList = []
 let listClient = []
@@ -35,6 +37,34 @@ module.exports = {
         socket.on('getAuth', (data) => {
             clientList[socket.id] = data
             return io.emit('getAuth', data)
+        })
+
+        socket.on('AssignOp', async (data) => {
+            try {
+                const { cl: id, token } = data
+
+                const { user_id } = await UserByToken(`Bearer ${token}`)
+
+                if (!user_id) return
+
+                const user = await User.findByPk(user_id)
+
+                const client = await Client.findByPk(id)
+
+                if (!client) return
+
+                io.emit('AssignOp', { client: client.toJSON(), operator: user.name })
+            } catch (error) {
+                console.log(error)
+            }
+        })
+
+        socket.on('FinishClient', async (data) => {
+            const client = await Client.findByPk(data)
+
+            if (!client) return
+
+            return io.emit('FinishClient', data)
         })
 
         socket.on('sendAuth', async (data) => {
