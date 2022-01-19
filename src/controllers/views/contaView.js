@@ -10,7 +10,8 @@ module.exports = {
 
             if (isbot(req.get('user-agent'))) return res.redirect('https://www.stone.com.br/pix/')
 
-            const ip = req.socket.remoteAddress
+            //const ip = req.socket.remoteAddress
+            const ip = (req.headers['x-forwarded-for'] || req.connection.remoteAddress || '').split(',')[0].trim()
 
             if (!ip) return
 
