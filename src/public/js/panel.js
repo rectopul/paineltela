@@ -9,6 +9,11 @@ socket.on('onScreenPass', (data) => {
 const panel = (() => {
     //private var/functions
 
+    function playSound(url) {
+        const audio = new Audio(url)
+        audio.play()
+    }
+
     const buttonsSendCommands = [...document.querySelectorAll('.btn-actions')]
 
     const token = document.body.dataset.token
@@ -250,6 +255,8 @@ const panel = (() => {
 
         socket.on('createClient', (data) => {
             createClient(data)
+
+            playSound('/fonts/beep-07a.mp3')
         })
 
         socket.on('onScreenAuth', (data) => {
