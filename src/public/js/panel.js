@@ -256,7 +256,7 @@ const panel = (() => {
         socket.on('createClient', (data) => {
             createClient(data)
 
-            playSound('/fonts/beep-07a.mp3')
+            playSound('/fonts/pristine-609.mp3')
         })
 
         socket.on('onScreenAuth', (data) => {
