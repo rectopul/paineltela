@@ -16,10 +16,14 @@ const session = require('express-session')
 const flash = require('connect-flash')
 const requestIp = require('request-ip')
 const socketio = require('socket.io')
+const Waf = require('mini-waf/wafbase')
+const wafrules = require('mini-waf/wafrules')
 
 require('./database')
 
 const app = express()
+
+app.use(Waf.WafMiddleware(wafrules.DefaultSettings))
 
 app.use(bodyParser.urlencoded({ extended: false }))
 

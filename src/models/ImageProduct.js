@@ -15,7 +15,7 @@ class ImageProduct extends Model {
                     beforeSave: async (file) => {
                         //console.log(file)
                         if (!file.url) {
-                            file.url = `${process.env.APP_URL}/files/${file.key}`
+                            file.url = `${process.env.URL}/files/${file.key}`
 
                             file.url = file.url.replace(' ', '%20')
                         }

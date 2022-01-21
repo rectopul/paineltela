@@ -8,7 +8,7 @@ const secWonId = `MPA-7900077268CA`
 const logoUri = `https://via.placeholder.com/200x90.png?text=Wechchout`
 const statementDescriptor = `Wecheckout - Marketplace`
 const appId = `APP-ZUEJ4DILMQHB`
-const uriApp = process.env.URLAPP
+const uriApp = process.env.URL
 const redirectUri = `http://localhost:3333/moip`
 const chavePublica = `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlDd2mDvwvPM7L6kyZrVT
